@@ -1,0 +1,30 @@
+# Dependencies and generated builds
+node_modules/
+dist/
+
+# Browser QA artifacts
+.playwright-cli/
+output/
+
+# Local source reference (the app links to the online editions)
+byte_of_python.pdf
+
+# Operating-system files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+Thumbs.db
+Desktop.ini
+
+# IDE and editor settings
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Local environment files
+.env
+.env.*
+!.env.example

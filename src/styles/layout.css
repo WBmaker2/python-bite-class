@@ -1,0 +1,32 @@
+.app-shell { min-height: 100vh; display: flex; flex-direction: column; }
+.app-header { height: 78px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 1px solid var(--line); background: rgba(248,244,236,.94); }
+.brand-lockup, .header-status, .nav-heading, .progress-label, .playground-toolbar, .console-heading, .dialog-header, .lesson-actions, .challenge-heading { display: flex; align-items: center; }
+.brand-lockup { gap: 12px; }
+.brand-mark { display: grid; place-items: center; width: 36px; height: 36px; color: var(--paper); background: var(--ink); border-radius: 10px; font: 700 16px monospace; }
+.brand-lockup h1, .nav-heading h2, .lesson-heading h2, .playground-toolbar h2, .console-heading h3, .update-dialog h2, .challenge-heading h3 { margin: 0; color: var(--ink); }
+.brand-lockup h1 { font-size: 18px; letter-spacing: -.04em; }
+.eyebrow, .chapter-kicker { margin: 0 0 3px; font-size: 10px; font-weight: 800; letter-spacing: .13em; color: var(--mint-deep); }
+.header-status { gap: 18px; color: var(--ink-soft); font-size: 12px; }
+.chapter-badge { padding: 5px 9px; color: var(--mint-deep); border: 1px solid #9adfcd; border-radius: 100px; font-weight: 800; }
+.text-button, .reset-link, .privacy-note button { padding: 5px 0; color: var(--ink-soft); border: 0; background: transparent; font-size: 12px; text-decoration: underline; text-underline-offset: 3px; }
+.main-grid { flex: 1; display: grid; grid-template-columns: 250px minmax(420px, 1fr); min-height: calc(100vh - 78px); }
+.chapter-nav { display: flex; flex-direction: column; border-right: 1px solid var(--line); background: #f3eee5; }
+.nav-heading { justify-content: space-between; padding: 28px 22px 16px; }
+.nav-heading h2 { font-size: 16px; }
+.chapter-nav nav { padding: 0 12px; overflow-y: auto; }
+.nav-item { width: 100%; display: flex; gap: 11px; align-items: center; padding: 12px 10px; text-align: left; color: var(--ink-soft); border: 0; border-radius: 10px; background: transparent; }
+.nav-item:hover, .nav-item.active { background: #e4f3ee; color: var(--ink); }
+.nav-item.active { box-shadow: inset 3px 0 0 var(--mint-deep); }
+.nav-number { display: grid; place-items: center; flex: 0 0 29px; width: 29px; height: 29px; border: 1px solid var(--line); border-radius: 8px; color: #8994a0; font: 700 11px monospace; }
+.nav-number.complete { color: var(--mint-deep); border-color: var(--mint); background: #d7f4ec; }
+.nav-item strong, .nav-item small { display: block; }
+.nav-item strong { font-size: 12px; }
+.nav-item small { margin-top: 3px; font-size: 10px; opacity: .75; }
+.progress-footer { margin-top: auto; padding: 19px 22px 24px; border-top: 1px solid var(--line); }
+.progress-label { justify-content: space-between; margin-bottom: 9px; color: var(--ink-soft); font-size: 11px; }.progress-label strong { color: var(--ink); }
+.progress-track { height: 6px; overflow: hidden; background: #d9e2dd; border-radius: 10px; }.progress-track span { display: block; height: 100%; background: var(--mint); border-radius: inherit; transition: width .3s ease; }
+.reset-link { margin-top: 13px; font-size: 11px; }
+.workspace { min-width: 0; display: grid; grid-template-columns: minmax(360px, .95fr) minmax(420px, 1.05fr); }
+.lesson-pane, .playground-pane { min-width: 0; overflow: auto; height: calc(100vh - 78px); }.lesson-pane { border-right: 1px solid var(--line); }.lesson-content { max-width: 760px; margin: 0 auto; padding: 32px 38px 42px; }
+.playground-panel { display: flex; flex-direction: column; height: 100%; padding: 26px 26px 14px; background: #f1f4f1; }.playground-toolbar { justify-content: space-between; gap: 14px; margin-bottom: 18px; }.playground-toolbar h2 { font-size: 17px; }.toolbar-actions { display: flex; gap: 7px; }.editor-wrap { min-height: 260px; flex: 1 1 55%; overflow: hidden; border: 1px solid #293c4e; border-radius: var(--radius) var(--radius) 0 0; background: var(--code); }.console-wrap { min-height: 190px; flex: 1 1 45%; overflow: hidden; border: 1px solid var(--line); border-top: 0; border-radius: 0 0 var(--radius) var(--radius); }.code-editor, .code-editor .cm-editor { height: 100%; }.code-editor .cm-scroller { overflow: auto; }.cm-editor { font-size: 13px; }.cm-editor .cm-gutters { background: #172638; color: #6d8294; border: 0; }.cm-editor .cm-activeLine, .cm-editor .cm-activeLineGutter { background: rgba(89, 213, 178, .08); }.cm-editor .cm-content { padding: 16px 0; }.cm-editor .cm-line { padding-left: 8px; }
+.mobile-tabs { display: none; }

@@ -1,0 +1,25 @@
+:root {
+  font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  color: #18324a;
+  background: #f8f4ec;
+  font-synthesis: none;
+  --ink: #18324a;
+  --ink-soft: #506276;
+  --paper: #f8f4ec;
+  --paper-deep: #eee8dd;
+  --line: #d9d1c4;
+  --mint: #43c6a4;
+  --mint-deep: #087f69;
+  --coral: #ef806d;
+  --coral-pale: #fff0ec;
+  --code: #172638;
+  --radius: 14px;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; min-height: 100vh; background: var(--paper); }
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; opacity: .45; }
+button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px solid #2d9c87; outline-offset: 3px; }
+pre, code, .code-editor { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace; }
