@@ -1,4 +1,5 @@
 export type LessonId = `chapter-${number}-${number}`;
+export type CompletionMode = 'read' | 'run' | 'challenge';
 
 export interface ConceptBlock {
   type: 'explanation' | 'tip' | 'warning' | 'example';
@@ -29,11 +30,25 @@ export interface Lesson {
   chapter: number;
   order: number;
   title: string;
+  completion: CompletionMode;
   summary: string;
   objectives: string[];
   concepts: ConceptBlock[];
-  starterCode: string;
+  starterCode?: string;
   expectedOutput?: string;
-  challenge: Challenge;
+  challenge?: Challenge;
   glossary: GlossaryItem[];
+  resources?: ResourceLink[];
+}
+
+export interface ResourceLink {
+  label: string;
+  href: string;
+  note?: string;
+}
+
+export interface Chapter {
+  number: number;
+  title: string;
+  lessons: Lesson[];
 }

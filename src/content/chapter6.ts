@@ -1,0 +1,9 @@
+import { chapter, makeLesson } from './lessonFactory';
+
+export const chapter6 = chapter(6, '연산자와 수식', [
+  makeLesson(6, 1, '연산자', '더하기·빼기·곱하기·나누기와 나머지를 기호로 표현합니다.', 'challenge', 'a = 17\nb = 5\nprint(a + b)\nprint(a % b)', '22\n2', { prompt: '두 수를 바꾸어 몫과 나머지를 관찰하세요.', hint: 'a와 b에 다른 정수를 넣어 보세요.', checks: [{ mode: 'contains', value: '2', feedback: '연산 결과를 관찰했어요.' }] }),
+  makeLesson(6, 2, '연산 및 할당 연산자', '계산한 결과를 변수에 다시 저장할 때 +=, -= 같은 할당 연산자를 쓸 수 있습니다.', 'challenge', 'score = 10\nscore += 5\nscore -= 2\nprint(score)', '13', { prompt: '점수를 더하고 빼는 과정을 바꿔 보세요.', hint: '+= 뒤 숫자를 고쳐 보세요.', checks: [{ mode: 'equals', value: '13', feedback: '값을 계산하며 갱신했어요.' }] }),
+  makeLesson(6, 3, '연산 순서', '곱셈과 나눗셈이 덧셈보다 먼저 계산됩니다. 순서를 모르면 괄호로 분명히 해요.', 'challenge', 'answer = 2 + 3 * 4\nprint(answer)', '14', { prompt: '괄호를 넣어 계산 결과를 20으로 만들어 보세요.', hint: '(2 + 3) * 4처럼 묶어 보세요.', checks: [{ mode: 'equals', value: '20', feedback: '괄호로 계산 순서를 바꿨어요.' }] }),
+  makeLesson(6, 4, '수식 예제', '간식 가격과 개수로 예산을 계산해 실제 문제에 수식을 적용합니다.', 'challenge', 'price = 1200\ncount = 3\nbudget = 5000\nspent = price * count\nprint("사용 금액:", spent)\nprint("남은 금액:", budget - spent)', '사용 금액: 3600\n남은 금액: 1400', { prompt: '간식 가격과 개수를 바꿔 남은 예산을 다시 계산하세요.', hint: 'price, count, budget 중 하나를 바꿔 보세요.', checks: [{ mode: 'contains', value: '남은 금액', feedback: '예산 계산 결과를 확인했어요.' }] }),
+  makeLesson(6, 5, '연산 확인 문제', '수식을 읽고 결과를 예상한 뒤 실행 결과로 확인합니다.', 'challenge', 'width = 8\nheight = 5\nprint("넓이:", width * height)\nprint("둘레:", (width + height) * 2)', '넓이: 40\n둘레: 26', { prompt: '직사각형의 가로와 세로를 바꾸어 보세요.', hint: 'width와 height를 다른 숫자로 바꿔요.', checks: [{ mode: 'contains', value: '넓이', feedback: '수식과 결과를 연결했어요.' }] }),
+]);

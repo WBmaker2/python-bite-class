@@ -1,0 +1,13 @@
+import { chapter, makeLesson } from './lessonFactory';
+
+export const chapter8 = chapter(8, '함수', [
+  makeLesson(8, 1, '함수와 매개변수', 'def로 자주 쓸 동작을 묶고 매개변수로 재료를 받습니다.', 'challenge', 'def greet(name):\n    print("안녕,", name)\n\ngreet("민준")', '안녕, 민준', { prompt: '다른 이름으로 함수를 호출하세요.', hint: 'greet 괄호 안의 이름을 바꿔요.', checks: [{ mode: 'contains', value: '안녕', feedback: '함수에 입력을 전달했어요.' }] }),
+  makeLesson(8, 2, '지역 변수', '함수 안에서 만든 변수는 그 함수 안에서 주로 사용됩니다.', 'challenge', 'def make_message():\n    message = "함수 안의 메시지"\n    return message\n\nprint(make_message())', '함수 안의 메시지', { prompt: '함수가 돌려줄 메시지를 바꾸세요.', hint: 'return 뒤 문자열을 고쳐요.', checks: [{ mode: 'contains', value: '함수', feedback: '함수의 결과를 받아 출력했어요.' }] }),
+  makeLesson(8, 3, 'global은 신중하게', '바깥 변수와 안쪽 변수를 섞기보다 매개변수와 return으로 값을 주고받는 편이 안전합니다.', 'read'),
+  makeLesson(8, 4, '기본 인수', '매개변수에 기본값을 정하면 입력을 생략해도 함수가 동작합니다.', 'challenge', 'def cheer(name="친구"):\n    print(name, "힘내!")\n\ncheer()\ncheer("지우")', '친구 힘내!\n지우 힘내!', { prompt: '기본 이름을 바꾸고 다시 실행하세요.', hint: 'name="친구" 부분을 고쳐요.', checks: [{ mode: 'contains', value: '힘내', feedback: '기본 인수를 사용했어요.' }] }),
+  makeLesson(8, 5, '키워드 인수', '매개변수 이름을 함께 적으면 순서를 헷갈리지 않고 값을 전달할 수 있습니다.', 'challenge', 'def profile(name, grade):\n    print(name, grade, "학년")\n\nprofile(grade=2, name="민준")', '민준 2 학년', { prompt: '키워드 인수의 값을 나에게 맞게 바꾸세요.', hint: 'name과 grade 뒤의 값만 고쳐요.', checks: [{ mode: 'contains', value: '학년', feedback: '키워드로 값을 전달했어요.' }] }),
+  makeLesson(8, 6, '가변 인수', '몇 개가 들어올지 모르는 값은 *args로 받아 반복할 수 있습니다.', 'challenge', 'def total(*numbers):\n    return sum(numbers)\n\nprint(total(2, 3, 5))', '10', { prompt: '숫자를 하나 더 넣어 합계를 확인하세요.', hint: 'total 괄호 안에 숫자를 추가해요.', checks: [{ mode: 'equals', value: '10', feedback: '여러 입력을 함수로 처리했어요.' }] }),
+  makeLesson(8, 7, 'return', 'return은 함수의 계산 결과를 호출한 곳으로 돌려줍니다.', 'challenge', 'def average(a, b):\n    return (a + b) / 2\n\nprint("평균:", average(80, 90))', '평균: 85.0', { prompt: '두 점수를 바꾸어 평균을 계산하세요.', hint: 'average 호출 부분의 두 숫자를 고쳐요.', checks: [{ mode: 'contains', value: '평균', feedback: 'return 결과를 사용했어요.' }] }),
+  makeLesson(8, 8, '문서 문자열', '함수 첫 줄의 설명 문자열은 함수의 목적을 알려 주는 작은 안내문입니다.', 'challenge', 'def square(number):\n    """숫자를 제곱해 돌려줘요."""\n    return number ** 2\n\nprint(square(4))', '16', { prompt: '제곱할 숫자를 바꾸세요.', hint: 'square 호출 숫자를 고쳐요.', checks: [{ mode: 'equals', value: '16', feedback: '함수 설명과 결과를 확인했어요.' }] }),
+  makeLesson(8, 9, '함수 확인 실습', '할인 가격 함수를 만들며 입력·처리·결과의 흐름을 정리합니다.', 'challenge', 'def discount(price, rate):\n    return price * (1 - rate / 100)\n\nprint("할인 가격:", int(discount(10000, 20)))', '할인 가격: 8000', { prompt: '가격이나 할인율을 바꾸어 보세요.', hint: 'discount 호출의 숫자를 바꾸면 됩니다.', checks: [{ mode: 'contains', value: '할인 가격', feedback: '함수로 계산을 재사용했어요.' }] }),
+]);

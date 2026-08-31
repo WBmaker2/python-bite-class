@@ -1,0 +1,12 @@
+import { chapter, makeLesson } from './lessonFactory';
+
+export const chapter5 = chapter(5, '기초', [
+  makeLesson(5, 1, '주석', '숫자 기호 # 뒤의 글은 메모가 되어 실행되지 않습니다.', 'challenge', '# 오늘의 메모\nprint("주석은 설명을 도와줘요")', '주석은 설명을 도와줘요', { prompt: '코드에 나만의 주석을 한 줄 추가하세요.', hint: '#로 시작하는 문장을 위에 적어 보세요.', checks: [{ mode: 'contains', value: '주석', feedback: '메모와 실행 코드를 잘 구분했어요.' }] }),
+  makeLesson(5, 2, '리터럴 상수와 숫자형', '코드에 직접 적은 10, 3.14 같은 값은 리터럴입니다. 정수와 실수를 구분해요.', 'challenge', 'apples = 3\nprice = 1200.0\nprint(apples)\nprint(price)', '3\n1200.0', { prompt: '사과 개수와 가격을 나의 값으로 바꿔 보세요.', hint: '정수와 소수의 모양을 비교해 보세요.', checks: [{ mode: 'contains', value: '3', feedback: '숫자 리터럴을 출력했어요.' }] }),
+  makeLesson(5, 3, '문자열과 따옴표', '작은따옴표와 큰따옴표로 글자를 감싸면 문자열이 됩니다.', 'challenge', 'message = "파이썬은 재미있어요"\nprint(message)', '파이썬은 재미있어요', { prompt: 'message를 나만의 응원 문장으로 바꾸세요.', hint: '따옴표는 남겨 두고 안쪽만 고쳐요.', checks: [{ mode: 'contains', value: '파이썬', feedback: '문자열을 변수에 담았어요.' }] }),
+  makeLesson(5, 4, '문자열 포매팅과 이스케이프', 'f-string과 \\n 같은 이스케이프 문자를 사용하면 출력 모양을 쉽게 만들 수 있습니다.', 'challenge', 'name = "민준"\nprint(f"안녕, {name}!")\nprint("첫 줄\\n둘째 줄")', '안녕, 민준!\n첫 줄\n둘째 줄', { prompt: '이름을 바꾸어 나만의 인사를 출력하세요.', hint: 'name 변수의 값을 바꿔 보세요.', checks: [{ mode: 'contains', value: '안녕', feedback: '문자열 포매팅을 사용했어요.' }] }),
+  makeLesson(5, 5, '변수와 식별자 이름', '변수는 값에 붙이는 이름표입니다. 이름은 역할이 드러나고 규칙에 맞아야 합니다.', 'challenge', 'student_name = "지우"\nscore = 95\nprint(student_name, score)', '지우 95', { prompt: '변수 이름과 값을 나의 정보로 바꾸세요.', hint: '영문과 밑줄로 역할이 보이는 이름을 지어 보세요.', checks: [{ mode: 'contains', value: '95', feedback: '변수 이름으로 값을 꺼냈어요.' }] }),
+  makeLesson(5, 6, '자료형과 객체', 'type()으로 값의 종류를 살펴봅니다. 숫자와 문자열은 서로 다른 자료형입니다.', 'challenge', 'print(type(7).__name__)\nprint(type("seven").__name__)', 'int\nstr', { prompt: '실수나 참·거짓 값의 자료형도 확인하세요.', hint: 'type(3.14) 또는 type(True)를 사용해요.', checks: [{ mode: 'contains', value: 'float', feedback: '자료형을 직접 확인했어요.' }] }),
+  makeLesson(5, 7, '프로그램 작성과 들여쓰기', '콜론 뒤 블록은 같은 칸만큼 들여써야 합니다. 공백은 코드의 구조를 보여 줍니다.', 'challenge', 'ready = True\nif ready:\n    print("시작!")', '시작!', { prompt: '시작 메시지를 나만의 문장으로 바꾸세요.', hint: 'if 블록 안의 print를 고쳐요.', checks: [{ mode: 'contains', value: '!', feedback: '조건 블록의 들여쓰기를 지켰어요.' }] }),
+  makeLesson(5, 8, '기초 확인 실습', '주석·변수·문자열·숫자를 한 프로그램 안에서 연결해 봅니다.', 'challenge', '# 오늘의 기록\nname = "지우"\ndays = 5\nprint(name, "는", days, "일째 연습 중")', '지우 는 5 일째 연습 중', { prompt: '이름과 연습 날짜를 바꿔 기록하세요.', hint: 'name과 days 값을 함께 바꿔 보세요.', checks: [{ mode: 'contains', value: '일째', feedback: '기초 개념을 한데 모았어요.' }] }),
+]);

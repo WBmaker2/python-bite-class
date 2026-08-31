@@ -1,8 +1,16 @@
 import type { OutputCheck } from '../../content/types';
 
-export function checkChallenge(output: string, expectedOutput: string | undefined, checks: OutputCheck[] = []) {
+export function checkChallenge(
+  output: string,
+  expectedOutput: string | undefined,
+  checks: OutputCheck[] = [],
+  code?: string,
+  starterCode?: string,
+) {
   if (!checks.length) return { passed: false, message: '실행 결과를 살펴보고 스스로 설명해 보세요.' };
-  if (expectedOutput !== undefined && output.trim() === expectedOutput.trim()) {
+  const unchangedCode = code !== undefined && starterCode !== undefined && code.trim() === starterCode.trim();
+  const legacyUnchangedOutput = code === undefined && expectedOutput !== undefined && output.trim() === expectedOutput.trim();
+  if (unchangedCode || legacyUnchangedOutput) {
     return { passed: false, message: '시작 코드를 한 줄 이상 바꿔 보세요.' };
   }
   const passed = checks.every((check) => {
