@@ -16,6 +16,22 @@ export function checkChallenge(
   const passed = checks.every((check) => {
     if (check.mode === 'contains') return output.includes(check.value);
     if (check.mode === 'equals') return output.trim() === check.value.trim();
+    if (check.mode === 'changed') {
+      const normalizedOutput = output.trim();
+      const normalizedExpected = expectedOutput?.trim();
+      return normalizedOutput.length > 0 && normalizedOutput !== normalizedExpected;
+    }
+    if (check.mode === 'appended') {
+      const originalLines = expectedOutput?.trim().split(/\r?\n/).map((line) => line.trim()).filter(Boolean) ?? [];
+      const outputLines = output.trim().split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+      if (!originalLines.length || outputLines.length <= originalLines.length) return false;
+      let originalIndex = 0;
+      for (const line of outputLines) {
+        if (line === originalLines[originalIndex]) originalIndex += 1;
+        if (originalIndex === originalLines.length) return true;
+      }
+      return false;
+    }
     try { return new RegExp(check.value).test(output); } catch { return false; }
   });
   return { passed, message: passed ? checks[0].feedback : '아직 목표 결과와 달라요. 힌트를 참고해 한 줄씩 고쳐 보세요.' };

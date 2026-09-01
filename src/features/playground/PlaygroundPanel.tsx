@@ -4,6 +4,7 @@ import { usePythonRunner } from '../../hooks/usePythonRunner';
 import { checkChallenge } from './challengeCheck';
 import { CodeEditor } from './CodeEditor';
 import { OutputConsole } from './OutputConsole';
+import { combineStdoutOutput } from './outputText';
 
 interface Props { lesson: Lesson; savedCode?: string; onCodeChange: (code: string) => void; onPracticeComplete: (complete: boolean) => void; }
 
@@ -14,7 +15,7 @@ export function PlaygroundPanel({ lesson, savedCode, onCodeChange, onPracticeCom
   // including savedCode here would reset the cursor after every keystroke.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { setCode(savedCode ?? lesson.starterCode ?? ''); resetRunner(); }, [lesson.id]);
-  const challengeMessage = useMemo(() => runner.state === 'done' && lesson.challenge ? checkChallenge(runner.outputs.filter((item) => item.kind === 'stdout').map((item) => item.text).join(''), lesson.expectedOutput, lesson.challenge.checks, code, lesson.starterCode) : undefined, [runner.state, runner.outputs, lesson.expectedOutput, lesson.challenge, lesson.starterCode, code]);
+  const challengeMessage = useMemo(() => runner.state === 'done' && lesson.challenge ? checkChallenge(combineStdoutOutput(runner.outputs), lesson.expectedOutput, lesson.challenge.checks, code, lesson.starterCode) : undefined, [runner.state, runner.outputs, lesson.expectedOutput, lesson.challenge, lesson.starterCode, code]);
   useEffect(() => { onPracticeComplete(lesson.completion === 'run' ? runner.state === 'done' : lesson.completion === 'challenge' && challengeMessage?.passed === true); }, [lesson.completion, runner.state, challengeMessage, onPracticeComplete]);
   const changeCode = (next: string) => { setCode(next); onCodeChange(next); };
   if (!lesson.starterCode) return <section className="playground-panel practice-placeholder" aria-label="코드 실습 안내"><span className="chapter-kicker">READ FIRST</span><h2>읽기 단계</h2><p>가운데 설명을 읽고 핵심을 정리하면 다음 소단원이 열립니다. 다음 실행 단계에서 코드를 직접 다뤄 볼게요.</p></section>;

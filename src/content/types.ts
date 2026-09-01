@@ -9,7 +9,7 @@ export interface ConceptBlock {
 }
 
 export interface OutputCheck {
-  mode: 'contains' | 'equals' | 'regex';
+  mode: 'contains' | 'equals' | 'regex' | 'appended' | 'changed';
   value: string;
   feedback: string;
 }
