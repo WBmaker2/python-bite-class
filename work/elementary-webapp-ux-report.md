@@ -60,8 +60,8 @@ Stage 0은 `ready`였습니다. 선택된 UX 검토 경로는 `design-system`이
 
 ## 확인 링크
 
-- 학습자 공개 페이지(현재 공개 릴리스): [python-bite-class GitHub Pages](https://wbmaker2.github.io/python-bite-class/)
+- 학습자 공개 페이지(커밋 `535b34c` 배포 완료): [python-bite-class GitHub Pages](https://wbmaker2.github.io/python-bite-class/)
 - 소스 저장소: [WBmaker2/python-bite-class](https://github.com/WBmaker2/python-bite-class)
 - HVC 확인용 공개 링크도 위 Pages 주소를 사용합니다.
 
-이번 턴의 수정 사항은 아직 커밋·푸시·재배포하지 않았으므로, 위 공개 URL은 이전 공개 릴리스 상태입니다. 변경 공개는 별도 `커밋, 푸시, 배포` 요청 후 진행합니다.
+GitHub Actions [Pages 배포 실행 33492067781](https://github.com/WBmaker2/python-bite-class/actions/runs/33492067781)이 build·test·deploy 모두 성공했습니다. 공개 브라우저에서 375px 첫 실행과 `공개 배포 확인` 출력, 콘솔 오류 0건을 확인했습니다.
