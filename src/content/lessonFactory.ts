@@ -1,4 +1,5 @@
 import type { Challenge, CompletionMode, ConceptBlock, GlossaryItem, Lesson, ResourceLink } from './types';
+import { getLessonGuide } from './lessonGuides';
 
 const defaultConcepts = (title: string, summary: string): ConceptBlock[] => [
   { type: 'explanation', title, body: summary },
@@ -16,14 +17,15 @@ export function makeLesson(
   starterCode?: string,
   expectedOutput?: string,
   challenge?: Challenge,
-  concepts = defaultConcepts(title, summary),
-  glossary = defaultGlossary(title),
+  concepts?: ConceptBlock[],
+  glossary?: GlossaryItem[],
   resources?: ResourceLink[],
 ): Lesson {
+  const lessonGuide = getLessonGuide(chapter, order);
   return {
     id: `chapter-${chapter}-${order}` as Lesson['id'], chapter, order, title, summary, completion,
-    objectives: completion === 'read' ? ['설명을 읽고 핵심 생각을 한 문장으로 정리할 수 있어요.'] : ['예제 코드를 실행하고 결과를 관찰할 수 있어요.', '한 줄을 바꾸어 나만의 결과를 만들 수 있어요.'],
-    concepts, starterCode, expectedOutput, challenge, glossary, resources,
+    objectives: lessonGuide?.objectives ?? (completion === 'read' ? ['설명을 읽고 핵심 생각을 한 문장으로 정리할 수 있어요.'] : ['예제 코드를 실행하고 결과를 관찰할 수 있어요.', '한 줄을 바꾸어 나만의 결과를 만들 수 있어요.']),
+    concepts: concepts ?? lessonGuide?.concepts ?? defaultConcepts(title, summary), starterCode, expectedOutput, challenge, glossary: glossary ?? lessonGuide?.glossary ?? defaultGlossary(title), resources,
   };
 }
 

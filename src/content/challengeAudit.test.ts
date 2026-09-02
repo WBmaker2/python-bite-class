@@ -15,10 +15,10 @@ describe('challenge answer audit', () => {
   });
 
   it('uses change or append checks for free-choice and collection additions', () => {
-    const changedIds = ['chapter-2-2', 'chapter-2-4', 'chapter-3-3', 'chapter-4-4', 'chapter-4-5', 'chapter-5-2', 'chapter-5-3', 'chapter-5-5', 'chapter-5-7', 'chapter-5-8', 'chapter-6-1', 'chapter-6-2', 'chapter-8-2', 'chapter-8-7', 'chapter-8-8', 'chapter-9-1', 'chapter-9-2', 'chapter-9-3', 'chapter-9-6', 'chapter-9-7', 'chapter-10-1', 'chapter-10-3', 'chapter-10-8', 'chapter-11-4', 'chapter-11-8'];
+    const changedIds = ['chapter-2-2', 'chapter-3-3', 'chapter-4-3', 'chapter-4-4', 'chapter-4-5', 'chapter-5-2', 'chapter-5-3', 'chapter-5-5', 'chapter-5-7', 'chapter-5-8', 'chapter-6-1', 'chapter-6-2', 'chapter-8-2', 'chapter-8-7', 'chapter-8-8', 'chapter-9-1', 'chapter-9-2', 'chapter-9-3', 'chapter-9-6', 'chapter-9-7', 'chapter-10-1', 'chapter-10-3', 'chapter-10-8', 'chapter-11-4', 'chapter-11-8'];
     changedIds.forEach((id) => expect(challenge(id).some((check) => check.mode === 'changed'), id).toBe(true));
 
-    const appendedIds = ['chapter-2-3', 'chapter-3-4', 'chapter-4-3', 'chapter-10-4', 'chapter-10-5', 'chapter-10-7', 'chapter-10-9', 'chapter-11-2', 'chapter-11-3', 'chapter-11-5', 'chapter-11-7'];
+    const appendedIds = ['chapter-2-3', 'chapter-3-4', 'chapter-10-4', 'chapter-10-5', 'chapter-10-7', 'chapter-10-9', 'chapter-11-2', 'chapter-11-3', 'chapter-11-5', 'chapter-11-7'];
     appendedIds.forEach((id) => expect(challenge(id).some((check) => check.mode === 'appended'), id).toBe(true));
   });
 

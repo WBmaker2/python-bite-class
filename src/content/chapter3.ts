@@ -1,8 +1,8 @@
 import { chapter, makeLesson } from './lessonFactory';
 
 export const chapter3 = chapter(3, '설치와 실행 환경', [
-  makeLesson(3, 1, '설치 없이 브라우저에서 실행', '이 앱은 브라우저 안의 작은 Python 실험실이라 설치 과정 없이 시작할 수 있습니다.', 'run', 'print("브라우저 실험실 준비 완료")', '브라우저 실험실 준비 완료'),
-  makeLesson(3, 2, '운영체제와 Python 설치', '컴퓨터에 Python을 설치하면 파일로 저장하고 터미널에서도 실행할 수 있습니다.', 'read'),
-  makeLesson(3, 3, '명령줄과 파일 실행', '터미널은 글자로 컴퓨터에 명령하는 공간이고, .py 파일은 Python 프로그램 파일입니다.', 'challenge', 'file_name = "hello.py"\nprint("실행할 파일:", file_name)', '실행할 파일: hello.py', { prompt: '실행할 나만의 파일 이름을 만들어 출력하세요.', hint: '.py로 끝나는 이름을 file_name에 넣어 보세요.', checks: [{ mode: 'contains', value: '.py', feedback: 'Python 파일 이름을 확인했어요.' }, { mode: 'changed', value: '', feedback: '나만의 Python 파일 이름을 만들었어요.' }] }),
-  makeLesson(3, 4, '환경 확인 실습', '실행 환경의 약속을 글자로 정리하고, 코드가 위에서 아래로 실행되는지 봅니다.', 'challenge', 'print("1. 코드 작성")\nprint("2. 실행 버튼")\nprint("3. 결과 확인")', '1. 코드 작성\n2. 실행 버튼\n3. 결과 확인', { prompt: '나만의 실습 순서를 한 줄 추가하세요.', hint: 'print()를 하나 더 적으면 됩니다.', checks: [{ mode: 'appended', value: '', feedback: '실행 흐름을 잘 정리했어요.' }] }),
+  makeLesson(3, 1, '브라우저에서 바로 시작해요', '이 수업은 별도 준비 없이 웹브라우저에서 파이썬 실험실을 열고 바로 코드를 실행합니다.', 'read'),
+  makeLesson(3, 2, '코드 실행실 살펴보기', '가운데 설명을 읽고 오른쪽 편집기에 코드를 적습니다. 실행 버튼을 누르면 아래 결과 창에서 바로 확인합니다.', 'read'),
+  makeLesson(3, 3, '실행 결과 읽기', '실행 결과는 코드가 끝난 뒤 보여 주는 답입니다. 결과를 읽고 코드가 하려던 일과 맞는지 비교합니다.', 'challenge', 'message = "결과 창에서 확인해요"\nprint(message)', '결과 창에서 확인해요', { prompt: '결과 안내 문장을 나만의 말로 바꾸세요.', hint: 'message의 따옴표 안을 바꾸면 됩니다.', checks: [{ mode: 'changed', value: '', feedback: '나만의 결과 안내 문장을 만들었어요.' }] }),
+  makeLesson(3, 4, '브라우저 실습 약속', '이 실습은 브라우저 안에서만 진행됩니다. 코드가 오래 걸리거나 결과가 너무 많으면 안전을 위해 실행을 멈춥니다.', 'challenge', 'steps = ["코드 작성", "실행 버튼", "결과 확인"]\nfor step in steps:\n    print(step)', '코드 작성\n실행 버튼\n결과 확인', { prompt: '실습 순서에 “친구에게 설명하기” 같은 단계를 하나 더 넣으세요.', hint: 'steps 리스트에 문자열을 추가한 뒤 실행해 보세요.', checks: [{ mode: 'appended', value: '', feedback: '브라우저 실습 흐름을 한 단계 더 만들었어요.' }] }),
 ]);
