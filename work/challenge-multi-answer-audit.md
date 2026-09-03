@@ -5,7 +5,7 @@
 
 ## 판정 기준
 
-- 학습자가 이름·문장·숫자·모듈·자료 항목을 자유롭게 고르는 단계는 특정 예시 출력 대신 `changed`를 사용합니다. `changed`는 정상적인 비어 있지 않은 출력이 `expectedOutput`과 달라야 통과시킵니다.
+- 학습자가 이름·문장·숫자·모듈·자료 항목을 자유롭게 고르는 단계는 특정 예시 출력 대신 `changed`를 사용합니다. `changed`는 비어 있지 않은 출력이 기준 출력과 다르거나, 공백·주석을 제외한 실질적인 코드 변경이 있으면 통과시킵니다. 따라서 연산 과정을 바꿨지만 최종값이 우연히 같은 경우도 막지 않습니다.
 - 목록에 한 항목을 추가하는 단계는 `appended`를 사용합니다. 시작 출력의 모든 비어 있지 않은 줄이 같은 순서의 부분수열로 남아 있고, 전체 줄 수가 더 많으면 통과합니다. 새 줄은 앞·중간·뒤 어느 위치에도 올 수 있습니다.
 - 계산 결과·반복 범위·조건 결과처럼 목표가 명확한 단계는 `equals` 또는 필요한 `contains`를 유지합니다. 같은 결과를 만드는 코드는 허용합니다.
 - 여러 검사는 AND로 평가합니다. 예를 들어 `contains + changed`는 학습 목표의 구조를 유지하면서 시작 출력 그대로인 코드를 통과시키지 않습니다.
@@ -77,8 +77,8 @@
 
 ## 검증
 
-- `src/features/playground/challengeCheck.test.ts`: `changed`의 자유 출력·빈 출력·동일 출력, `float|bool` 복수 정답, 기존 appended 회귀를 고정했습니다.
+- `src/features/playground/challengeCheck.test.ts`: `changed`의 자유 출력·빈 출력·동일 소스, 최종값이 같아도 실질적인 코드 변경을 인정하는 경우, 주석만 추가한 경우, `float|bool` 복수 정답, 기존 appended 회귀를 고정했습니다.
 - `src/content/challengeAudit.test.ts`: 모든 challenge에 검사 조건이 있는지, 자유 선택 단계가 `changed`, 목록 추가 단계가 `appended`, 7.1의 `else`와 핵심 명확 목표가 유지되는지 고정했습니다.
-- `npm run lint`, `npm run typecheck`, `npm test -- --run`(4개 파일, 25개 테스트), `npm run build`, `git diff --check`를 모두 통과했습니다.
+- `npm run lint`, `npm run typecheck`, `npm test -- --run`(7개 파일, 32개 테스트), `npm run build`, `git diff --check`를 모두 통과했습니다.
 - 실제 브라우저에서 5.6의 `bool`, 8.6의 임의 추가 숫자 `32`, 10.4의 맨 앞 새 과목 `음악 77`, 11.3의 충분한 가위 재고(`준비 완료: 가위`)가 각각 도전을 통과하는 것을 확인했습니다.
 - 브라우저 콘솔 오류는 0건이었습니다. VoiceOver 검증은 프로젝트 지침에 따라 제외했습니다.

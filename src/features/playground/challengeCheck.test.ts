@@ -24,9 +24,19 @@ describe('checkChallenge', () => {
   it('accepts any non-empty output that differs for a free-choice challenge', () => {
     expect(checkChallenge('나만의 문장', '시작 문장', [{ mode: 'changed', value: '', feedback: '좋아요' }], 'changed', 'starter')).toEqual({ passed: true, message: '좋아요' });
   });
-  it('rejects empty or unchanged output for a changed check', () => {
+  it('accepts a meaningful code change when the final result stays the same', () => {
+    const starter = 'score = 10\nscore += 5\nscore -= 2\nprint(score)';
+    const changed = 'score = 10\nscore += 6\nscore -= 3\nprint(score)';
+    expect(checkChallenge('13', '13', [{ mode: 'changed', value: '', feedback: '연산 과정을 바꿨어요.' }], changed, starter)).toEqual({ passed: true, message: '연산 과정을 바꿨어요.' });
+  });
+  it('does not treat whitespace or comment-only edits as a meaningful change', () => {
+    const starter = 'score = 10\nscore += 5\nscore -= 2\nprint(score)';
+    const commentOnly = '# 계산 메모\nscore = 10\nscore += 5\nscore -= 2\nprint(score)';
+    expect(checkChallenge('13', '13', [{ mode: 'changed', value: '', feedback: '좋아요' }], commentOnly, starter).passed).toBe(false);
+  });
+  it('rejects empty output or unchanged source for a changed check', () => {
     expect(checkChallenge('', '시작 문장', [{ mode: 'changed', value: '', feedback: '좋아요' }], 'changed', 'starter').passed).toBe(false);
-    expect(checkChallenge('시작 문장', '시작 문장', [{ mode: 'changed', value: '', feedback: '좋아요' }], 'changed', 'starter').passed).toBe(false);
+    expect(checkChallenge('시작 문장', '시작 문장', [{ mode: 'changed', value: '', feedback: '좋아요' }], 'same', 'same').passed).toBe(false);
   });
   it('accepts either float or bool for the data type challenge', () => {
     const check = [{ mode: 'regex' as const, value: '(?:^|\\n)(?:float|bool)(?:$|\\n)', feedback: '좋아요' }];

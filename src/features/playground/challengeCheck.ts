@@ -1,5 +1,13 @@
 import type { OutputCheck } from '../../content/types';
 
+/** Ignore blank lines and full-line comments when deciding whether code changed. */
+function normalizeCodeForChallenge(code: string) {
+  return code.split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith('#'))
+    .join('\n');
+}
+
 export function checkChallenge(
   output: string,
   expectedOutput: string | undefined,
@@ -9,6 +17,7 @@ export function checkChallenge(
 ) {
   if (!checks.length) return { passed: false, message: '실행 결과를 살펴보고 스스로 설명해 보세요.' };
   const unchangedCode = code !== undefined && starterCode !== undefined && code.trim() === starterCode.trim();
+  const changedSource = code !== undefined && starterCode !== undefined && normalizeCodeForChallenge(code) !== normalizeCodeForChallenge(starterCode);
   const legacyUnchangedOutput = code === undefined && expectedOutput !== undefined && output.trim() === expectedOutput.trim();
   if (unchangedCode || legacyUnchangedOutput) {
     return { passed: false, message: '시작 코드를 한 줄 이상 바꿔 보세요.' };
@@ -19,7 +28,7 @@ export function checkChallenge(
     if (check.mode === 'changed') {
       const normalizedOutput = output.trim();
       const normalizedExpected = expectedOutput?.trim();
-      return normalizedOutput.length > 0 && normalizedOutput !== normalizedExpected;
+      return normalizedOutput.length > 0 && (normalizedOutput !== normalizedExpected || changedSource);
     }
     if (check.mode === 'appended') {
       const originalLines = expectedOutput?.trim().split(/\r?\n/).map((line) => line.trim()).filter(Boolean) ?? [];
