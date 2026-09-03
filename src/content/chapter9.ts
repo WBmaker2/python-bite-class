@@ -1,7 +1,7 @@
 import { chapter, makeLesson } from './lessonFactory';
 
 export const chapter9 = chapter(9, '모듈', [
-  makeLesson(9, 1, 'import와 코드 묶음', 'import는 다른 파일이나 표준 라이브러리의 도구를 가져오는 명령입니다.', 'challenge', 'import math\nprint(round(math.sqrt(25)))', '5', { prompt: 'math 도구로 다른 계산을 해 보세요.', hint: 'math.pi 또는 math.ceil()을 찾아 사용해요.', checks: [{ mode: 'changed', value: '', feedback: '모듈의 다른 도구로 계산했어요.' }] }),
+  makeLesson(9, 1, 'import와 코드 묶음', 'import는 다른 파일이나 표준 라이브러리의 도구를 가져오는 명령입니다. math 모듈에는 math.sqrt(x)와 math.fabs(x) 같은 계산 도구가 있어요.', 'challenge', 'import math\nprint(round(math.sqrt(25)))', '5', { prompt: 'math 도구로 다른 계산을 해 보세요.', hint: 'math.sqrt(25)로 제곱근을 확인한 뒤 math.fabs(-3.5)도 실행해 절대값을 관찰해 보세요. math.pi나 math.ceil()도 찾아볼 수 있어요.', checks: [{ mode: 'changed', value: '', feedback: '모듈의 다른 도구로 계산했어요.' }] }),
   makeLesson(9, 2, 'from ... import', '모듈 이름을 매번 쓰기 싫을 때 필요한 이름만 가져올 수 있습니다.', 'challenge', 'from math import pi\nprint(round(pi, 2))', '3.14', { prompt: 'pi의 자릿수를 바꾸어 출력하세요.', hint: 'round의 두 번째 숫자를 고쳐요.', checks: [{ mode: 'changed', value: '', feedback: '원하는 자릿수로 모듈 값을 출력했어요.' }] }),
   makeLesson(9, 3, '__name__ 살펴보기', '파일이 직접 실행되는지 다른 코드에서 불린 것인지 구분할 때 __name__을 사용합니다.', 'challenge', 'if __name__ == "__main__":\n    print("이 파일을 직접 실행했어요")', '이 파일을 직접 실행했어요', { prompt: '직접 실행 안내 문장을 바꾸세요.', hint: 'print 안의 문자열을 고쳐요.', checks: [{ mode: 'changed', value: '', feedback: '__name__ 조건 안의 안내 문장을 바꿨어요.' }] }),
   makeLesson(9, 4, '브라우저에서 모듈 살펴보기', '이 실습에서는 브라우저에서 바로 쓸 수 있도록 준비된 표준 모듈을 사용합니다. 모듈을 기능별 도구 상자로 나누면 코드를 읽기 쉬워집니다.', 'read'),

@@ -44,6 +44,16 @@ describe('challenge answer audit', () => {
     expect(challenge('chapter-7-1')).toEqual([{ mode: 'changed', value: '', feedback: 'if와 else 조건에 따라 다른 메시지를 확인했어요.' }]);
   });
 
+  it('explains sqrt and fabs in the first module lesson', () => {
+    const lesson = lessons.find((candidate) => candidate.id === 'chapter-9-1');
+    const lessonText = [lesson?.summary, ...(lesson?.concepts ?? []).flatMap((concept) => [concept.title ?? '', concept.body, concept.code ?? '']), ...(lesson?.glossary ?? []).flatMap((item) => [item.term, item.definition])].join(' ');
+    expect(lessonText).toContain('math.sqrt(x)');
+    expect(lessonText).toContain('제곱근');
+    expect(lessonText).toContain('math.fabs(x)');
+    expect(lessonText).toContain('절대값');
+    expect(lesson?.challenge?.hint).toContain('math.fabs(-3.5)');
+  });
+
   it('keeps collection additions observable in the output', () => {
     const dictionary = lessons.find((lesson) => lesson.id === 'chapter-10-4');
     expect(dictionary?.starterCode).toContain('scores.items()');
