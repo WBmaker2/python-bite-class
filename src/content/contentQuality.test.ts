@@ -36,4 +36,45 @@ describe('beginner content quality', () => {
       });
     });
   });
+
+  it('gives every execution lesson an example and an observe loop', () => {
+    lessons.filter((lesson) => lesson.chapter >= 2 && lesson.completion !== 'read').forEach((lesson) => {
+      const example = lesson.concepts.find((concept) => concept.type === 'example');
+      expect(example?.code, lesson.id).toBeTruthy();
+      expect(example?.body, lesson.id).toMatch(/예상|실행|관찰/);
+    });
+  });
+
+  it('explains beginner-facing functions and methods at their first code use', () => {
+    const requiredTermsByLesson: Record<string, string[]> = {
+      'chapter-2-2': ['변수', '할당', '='],
+      'chapter-2-3': ['리스트', 'for ... in', '반복'],
+      'chapter-5-6': ['type(...).__name__', '자료형 이름', 'float', 'bool'],
+      'chapter-5-7': ['if', 'True', '조건'],
+      'chapter-6-2': ['+=', '-=', '갱신'],
+      'chapter-7-1': ['>=', '참', '거짓'],
+      'chapter-7-2': ['<='],
+      'chapter-7-4': ['==', '같은지'],
+      'chapter-8-6': ['len()', 'sum()', '*numbers', 'tuple', '펼쳐'],
+      'chapter-8-9': ['int()'],
+      'chapter-8-8': ['**', '거듭제곱', '3 ** 2'],
+      'chapter-9-1': ['round()', '자릿수'],
+      'chapter-9-2': ['pi', '원주율', 'round()', 'round(number, ndigits)', 'ndigits', '3.14159', '3.14'],
+      'chapter-10-4': ['items()'],
+      'chapter-10-6': ['add()'],
+      'chapter-11-3': ['stock.get()', '기본값'],
+      'chapter-11-8': ['리스트 컴프리헨션', '조건식', '[item for item, amount in plan.items() if stock.get(item, 0) < amount]'],
+    };
+
+    Object.entries(requiredTermsByLesson).forEach(([lessonId, requiredTerms]) => {
+      const lesson = lessons.find((candidate) => candidate.id === lessonId);
+      const guideText = [
+        lesson?.summary,
+        ...(lesson?.concepts ?? []).flatMap((concept) => [concept.title ?? '', concept.body, concept.code ?? '']),
+        ...(lesson?.glossary ?? []).flatMap((item) => [item.term, item.definition]),
+        lesson?.challenge?.hint,
+      ].join(' ');
+      requiredTerms.forEach((term) => expect(guideText, `${lessonId} 설명에 ${term} 필요`).toContain(term));
+    });
+  });
 });

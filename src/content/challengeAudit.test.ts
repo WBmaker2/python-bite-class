@@ -14,6 +14,18 @@ describe('challenge answer audit', () => {
     auditedLessons.forEach((lesson) => expect(lesson.challenge?.checks?.length, lesson.id).toBeGreaterThan(0));
   });
 
+  it('gives every challenge a student-facing path, criteria, and recovery tips', () => {
+    lessons.filter((lesson) => lesson.chapter >= 2 && lesson.challenge).forEach((lesson) => {
+      const current = lesson.challenge;
+      expect(current?.steps?.length, `${lesson.id}:steps`).toBeGreaterThanOrEqual(2);
+      expect(current?.successCriteria?.length, `${lesson.id}:successCriteria`).toBeGreaterThan(0);
+      expect(current?.commonMistakes?.length, `${lesson.id}:commonMistakes`).toBeGreaterThan(0);
+      current?.steps?.forEach((step) => expect(step.length, `${lesson.id}:step`).toBeGreaterThan(8));
+      current?.successCriteria?.forEach((criterion) => expect(criterion.length, `${lesson.id}:criterion`).toBeGreaterThan(8));
+      current?.commonMistakes?.forEach((mistake) => expect(mistake.length, `${lesson.id}:mistake`).toBeGreaterThan(8));
+    });
+  });
+
   it('uses change or append checks for free-choice and collection additions', () => {
     const changedIds = ['chapter-2-2', 'chapter-3-3', 'chapter-4-3', 'chapter-4-4', 'chapter-4-5', 'chapter-5-2', 'chapter-5-3', 'chapter-5-5', 'chapter-5-7', 'chapter-5-8', 'chapter-6-1', 'chapter-6-2', 'chapter-8-2', 'chapter-8-7', 'chapter-8-8', 'chapter-9-1', 'chapter-9-2', 'chapter-9-3', 'chapter-9-6', 'chapter-9-7', 'chapter-10-1', 'chapter-10-3', 'chapter-10-8', 'chapter-11-4', 'chapter-11-8'];
     changedIds.forEach((id) => expect(challenge(id).some((check) => check.mode === 'changed'), id).toBe(true));
