@@ -33,4 +33,45 @@ describe('LessonWorkspace', () => {
     fireEvent.keyDown(separator, { key: 'End' });
     expect(separator).toHaveAttribute('aria-valuenow', '70');
   });
+
+  it('resizes with pointer capture, clamps the ratio, and cleans up drag state', () => {
+    render(<LessonWorkspace lesson={readLesson} index={1} total={69} completed={false} onCodeChange={vi.fn()} onComplete={vi.fn()} onNavigate={vi.fn()} />);
+    const separator = screen.getByRole('separator', { name: '설명과 코드 실습 너비 조절' });
+    const workspace = document.querySelector('.workspace');
+    if (!(workspace instanceof HTMLElement)) throw new Error('workspace element not found');
+
+    vi.spyOn(workspace, 'getBoundingClientRect').mockReturnValue({ left: 0, width: 1000 } as DOMRect);
+    vi.spyOn(separator, 'getBoundingClientRect').mockReturnValue({ width: 16 } as DOMRect);
+    const setPointerCapture = vi.fn();
+    const hasPointerCapture = vi.fn(() => true);
+    const releasePointerCapture = vi.fn();
+    Object.defineProperties(separator, {
+      setPointerCapture: { configurable: true, value: setPointerCapture },
+      hasPointerCapture: { configurable: true, value: hasPointerCapture },
+      releasePointerCapture: { configurable: true, value: releasePointerCapture },
+    });
+    const dispatchPointer = (type: string, clientX: number) => {
+      const event = new Event(type, { bubbles: true });
+      Object.defineProperties(event, {
+        clientX: { configurable: true, value: clientX },
+        pointerId: { configurable: true, value: 7 },
+      });
+      fireEvent(separator, event);
+    };
+
+    dispatchPointer('pointerdown', 500);
+    expect(setPointerCapture).toHaveBeenCalledTimes(1);
+    const capturedPointerId = setPointerCapture.mock.calls[0][0];
+    expect(document.body).toHaveClass('is-workspace-resizing');
+
+    dispatchPointer('pointermove', 0);
+    expect(separator).toHaveAttribute('aria-valuenow', '30');
+    dispatchPointer('pointermove', 1000);
+    expect(separator).toHaveAttribute('aria-valuenow', '70');
+
+    dispatchPointer('pointerup', 1000);
+    expect(hasPointerCapture).toHaveBeenCalledWith(capturedPointerId);
+    expect(releasePointerCapture).toHaveBeenCalledWith(capturedPointerId);
+    expect(document.body).not.toHaveClass('is-workspace-resizing');
+  });
 });
