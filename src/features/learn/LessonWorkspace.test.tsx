@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import type { Lesson } from '../../content/types';
 import { LessonWorkspace } from './LessonWorkspace';
@@ -13,5 +13,24 @@ describe('LessonWorkspace', () => {
   it('keeps read lessons completable after the playground effect runs', async () => {
     render(<LessonWorkspace lesson={readLesson} index={1} total={69} completed={false} onCodeChange={vi.fn()} onComplete={vi.fn()} onNavigate={vi.fn()} />);
     await waitFor(() => expect(screen.getByRole('button', { name: '학습 완료' })).toBeEnabled());
+  });
+
+  it('exposes an adjustable desktop separator with keyboard controls', () => {
+    render(<LessonWorkspace lesson={readLesson} index={1} total={69} completed={false} onCodeChange={vi.fn()} onComplete={vi.fn()} onNavigate={vi.fn()} />);
+    const separator = screen.getByRole('separator', { name: '설명과 코드 실습 너비 조절' });
+
+    expect(separator).toHaveAttribute('aria-orientation', 'vertical');
+    expect(separator).toHaveAttribute('aria-valuemin', '30');
+    expect(separator).toHaveAttribute('aria-valuemax', '70');
+    expect(separator).toHaveAttribute('aria-valuenow', '48');
+    expect(separator).toHaveAttribute('aria-controls', 'lesson-pane playground-pane');
+    expect(separator).toHaveAttribute('tabindex', '0');
+
+    fireEvent.keyDown(separator, { key: 'ArrowRight' });
+    expect(separator).toHaveAttribute('aria-valuenow', '52');
+    fireEvent.keyDown(separator, { key: 'Home' });
+    expect(separator).toHaveAttribute('aria-valuenow', '30');
+    fireEvent.keyDown(separator, { key: 'End' });
+    expect(separator).toHaveAttribute('aria-valuenow', '70');
   });
 });
