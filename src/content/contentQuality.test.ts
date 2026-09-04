@@ -38,7 +38,7 @@ describe('beginner content quality', () => {
   });
 
   it('gives every execution lesson an example and an observe loop', () => {
-    lessons.filter((lesson) => lesson.chapter >= 2 && lesson.completion !== 'read').forEach((lesson) => {
+    lessons.filter((lesson) => lesson.chapter >= 2 && lesson.starterCode).forEach((lesson) => {
       const example = lesson.concepts.find((concept) => concept.type === 'example');
       expect(example?.code, lesson.id).toBeTruthy();
       expect(example?.body, lesson.id).toMatch(/예상|실행|관찰/);
@@ -76,5 +76,15 @@ describe('beginner content quality', () => {
       ].join(' ');
       requiredTerms.forEach((term) => expect(guideText, `${lessonId} 설명에 ${term} 필요`).toContain(term));
     });
+  });
+
+  it('distinguishes type and module name attributes', () => {
+    const typeNameText = chapterText(5);
+    const moduleNameLesson = lessons.find((lesson) => lesson.id === 'chapter-9-6');
+    const moduleNameText = [moduleNameLesson?.summary, ...(moduleNameLesson?.concepts ?? []).flatMap((concept) => [concept.title ?? '', concept.body, concept.code ?? '']), ...(moduleNameLesson?.glossary ?? []).flatMap((item) => [item.term, item.definition])].join(' ');
+    expect(typeNameText).toContain('자료형의 이름');
+    expect(moduleNameText).toContain('math.__name__');
+    expect(moduleNameText).toContain('모듈의 이름');
+    expect(moduleNameText).toContain('자료형 이름');
   });
 });

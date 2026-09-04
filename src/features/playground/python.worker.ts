@@ -1,4 +1,6 @@
 /// <reference lib="webworker" />
+import { createMainModuleGlobals } from './pythonGlobals';
+
 const PYODIDE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.26.2/full/';
 const MAX_LINES = 300;
 const MAX_BYTES = 30_000;
@@ -32,7 +34,7 @@ async function execute(code: string) {
     };
     pyodide.setStdout({ batched: (text: string) => capture(text, 'stdout') });
     pyodide.setStderr({ batched: (text: string) => capture(text, 'stderr') });
-    await pyodide.runPythonAsync(code, { globals: pyodide.toPy({}) });
+    await pyodide.runPythonAsync(code, { globals: createMainModuleGlobals(pyodide) });
     send('done');
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

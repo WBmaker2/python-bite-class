@@ -1,5 +1,5 @@
 export type LessonId = `chapter-${number}-${number}`;
-export type CompletionMode = 'read' | 'run' | 'challenge';
+export type CompletionMode = 'read' | 'run' | 'challenge' | 'optional';
 
 export interface ConceptBlock {
   type: 'explanation' | 'tip' | 'warning' | 'example';

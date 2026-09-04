@@ -18,9 +18,26 @@ export const getLesson = (id: string) => lessons.find((lesson) => lesson.id === 
 export const getChapter = (number: number) => chapters.find((item) => item.number === number) ?? chapters[0];
 
 export function isLessonUnlocked(index: number, completed: ReadonlySet<string>) {
-  return index === 0 || completed.has(lessons[index - 1].id);
+  if (index === 0) return true;
+  for (let previousIndex = index - 1; previousIndex >= 0; previousIndex -= 1) {
+    const previousLesson = lessons[previousIndex];
+    if (previousLesson.completion !== 'optional') return completed.has(previousLesson.id);
+  }
+  return true;
 }
 
 export function getChapterProgress(chapter: Chapter, completed: ReadonlySet<string>) {
-  return chapter.lessons.filter((lesson) => completed.has(lesson.id)).length;
+  return chapter.lessons.filter((lesson) => lesson.completion !== 'optional' && completed.has(lesson.id)).length;
+}
+
+export function getChapterLessonCount(chapter: Chapter) {
+  return chapter.lessons.filter((lesson) => lesson.completion !== 'optional').length;
+}
+
+export function getCompletedLessonCount(completed: ReadonlySet<string>) {
+  return lessons.filter((lesson) => lesson.completion !== 'optional' && completed.has(lesson.id)).length;
+}
+
+export function getRequiredLessonCount() {
+  return lessons.filter((lesson) => lesson.completion !== 'optional').length;
 }
