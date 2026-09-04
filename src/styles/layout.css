@@ -9,7 +9,7 @@
 .header-status { gap: 18px; color: var(--ink-soft); font-size: 12px; }
 .chapter-badge { padding: 5px 9px; color: var(--mint-deep); border: 1px solid #9adfcd; border-radius: 100px; font-weight: 800; }
 .text-button, .reset-link, .privacy-note button { padding: 5px 0; color: var(--ink-soft); border: 0; background: transparent; font-size: 12px; text-decoration: underline; text-underline-offset: 3px; }
-.main-grid { flex: 1; display: grid; grid-template-columns: 250px minmax(420px, 1fr); min-height: calc(100vh - 78px); }
+.main-grid { flex: 1; display: grid; grid-template-columns: 220px minmax(420px, 1fr); min-height: calc(100vh - 78px); }
 .chapter-nav { display: flex; flex-direction: column; border-right: 1px solid var(--line); background: #f3eee5; }
 .nav-heading { justify-content: space-between; padding: 28px 22px 16px; }
 .nav-heading h2 { font-size: 16px; }
@@ -41,7 +41,27 @@
 .progress-label { justify-content: space-between; margin-bottom: 9px; color: var(--ink-soft); font-size: 11px; }.progress-label strong { color: var(--ink); }
 .progress-track { height: 6px; overflow: hidden; background: #d9e2dd; border-radius: 10px; }.progress-track span { display: block; width: 100%; height: 100%; transform-origin: left center; background: var(--mint); border-radius: inherit; transition: transform .3s ease; }
 .reset-link { margin-top: 13px; font-size: 11px; }
-.workspace { min-width: 0; display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); }
-.lesson-pane, .playground-pane { min-width: 0; overflow: auto; height: calc(100vh - 78px); }.lesson-pane { border-right: 1px solid var(--line); }.lesson-content { max-width: 760px; margin: 0 auto; padding: 32px 38px 42px; }
+.workspace { min-width: 0; display: grid; grid-template-columns: minmax(0, var(--lesson-width, 48fr)) 16px minmax(0, var(--practice-width, 52fr)); }
+.lesson-pane, .playground-pane { min-width: 0; overflow: auto; height: calc(100vh - 78px); }.lesson-pane { border-right: 0; }.lesson-content { max-width: 760px; margin: 0 auto; padding: 32px 38px 42px; }
+.workspace-separator { position: relative; z-index: 2; display: grid; place-items: center; min-width: 16px; margin: 0 -1px; border: 0; border-left: 1px solid var(--line); border-right: 1px solid var(--line); background: rgba(243,238,229,.72); color: var(--mint-deep); cursor: col-resize; touch-action: none; user-select: none; }
+.workspace-separator::before { position: absolute; inset: 0 5px; content: ''; border-radius: 8px; background: rgba(89,213,178,.16); opacity: 0; transition: opacity .15s ease; }
+.workspace-separator span { position: relative; z-index: 1; font-size: 17px; line-height: 1; opacity: 0; pointer-events: none; }
+.workspace-separator:hover::before, .workspace-separator:focus-visible::before, .workspace-separator:active::before, .workspace.is-resizing .workspace-separator::before { opacity: 1; }
+.workspace-separator:hover span, .workspace-separator:focus-visible span, .workspace-separator:active span, .workspace.is-resizing .workspace-separator span { opacity: 1; }
+.workspace-separator:focus-visible { outline: 2px solid var(--mint-deep); outline-offset: -2px; }
 .playground-panel { display: flex; flex-direction: column; height: 100%; padding: 26px 26px 14px; background: #f1f4f1; }.playground-toolbar { justify-content: space-between; gap: 14px; margin-bottom: 18px; }.playground-toolbar h2 { font-size: 17px; }.toolbar-actions { display: flex; gap: 7px; }.editor-wrap { min-height: 260px; flex: 1 1 55%; overflow: hidden; border: 1px solid #293c4e; border-radius: var(--radius) var(--radius) 0 0; background: var(--code); }.console-wrap { min-height: 190px; flex: 1 1 45%; overflow: hidden; border: 1px solid var(--line); border-top: 0; border-radius: 0 0 var(--radius) var(--radius); }.code-editor, .code-editor .cm-editor { height: 100%; }.code-editor .cm-scroller { overflow: auto; }.cm-editor { font-size: 13px; }.cm-editor .cm-gutters { background: #172638; color: #6d8294; border: 0; }.cm-editor .cm-activeLine, .cm-editor .cm-activeLineGutter { background: rgba(89, 213, 178, .08); }.cm-editor .cm-content { padding: 16px 0; }.cm-editor .cm-line { padding-left: 8px; }
 .mobile-tabs { display: none; }
+
+@media (min-width: 901px) {
+  html, body, #root { height: 100%; overflow: hidden; }
+  .app-shell { height: 100vh; min-height: 0; overflow: hidden; }
+  .app-header { flex: 0 0 78px; min-height: 0; }
+  .main-grid { flex: 1 1 auto; grid-template-rows: minmax(0, 1fr); height: calc(100vh - 78px); min-height: 0; overflow: hidden; }
+  .chapter-nav { min-height: 0; }
+  .chapter-nav nav { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
+  .progress-footer { flex: 0 0 auto; }
+  .workspace { grid-template-rows: minmax(0, 1fr); height: 100%; min-height: 0; overflow: hidden; }
+  .lesson-pane, .playground-pane { height: auto; min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-gutter: stable; }
+  .playground-panel { min-height: 0; box-sizing: border-box; }
+  .editor-wrap, .console-wrap { min-height: 0; }
+}
