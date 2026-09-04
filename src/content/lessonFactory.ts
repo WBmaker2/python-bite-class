@@ -92,7 +92,7 @@ export function makeLesson(
 ): Lesson {
   const lessonGuide = getLessonGuide(chapter, order);
   const resolvedConcepts = concepts ?? lessonGuide?.concepts ?? defaultConcepts(title, summary);
-  const conceptsWithExample = completion !== 'read' && starterCode
+  const conceptsWithExample = completion !== 'read' && completion !== 'optional' && starterCode
     ? resolvedConcepts.some((concept) => concept.type === 'example')
       ? resolvedConcepts.map((concept) => concept.type === 'example' && !/예상|실행|관찰/.test(concept.body) ? { ...concept, body: `${concept.body}\n\n${practiceLoop(expectedOutput, chapter, challenge)}` } : concept)
       : [...resolvedConcepts, makePracticeExample(chapter, title, summary, starterCode, expectedOutput, challenge, lessonGuide?.exampleCode)]
@@ -100,7 +100,7 @@ export function makeLesson(
   const resolvedChallenge = challenge ? addChallengeGuidance(chapter, title, challenge) : undefined;
   return {
     id: `chapter-${chapter}-${order}` as Lesson['id'], chapter, order, title, summary, completion,
-    objectives: lessonGuide?.objectives ?? (completion === 'read' ? ['설명을 읽고 핵심 생각을 한 문장으로 정리할 수 있어요.'] : ['예제 코드를 실행하고 결과를 관찰할 수 있어요.', '한 줄을 바꾸어 나만의 결과를 만들 수 있어요.']),
+    objectives: lessonGuide?.objectives ?? (completion === 'optional' ? ['원할 때 설명을 읽고 모듈 이름 정보의 뜻을 한 문장으로 정리할 수 있어요.'] : completion === 'read' ? ['설명을 읽고 핵심 생각을 한 문장으로 정리할 수 있어요.'] : ['예제 코드를 실행하고 결과를 관찰할 수 있어요.', '한 줄을 바꾸어 나만의 결과를 만들 수 있어요.']),
     concepts: conceptsWithExample, starterCode, expectedOutput, challenge: resolvedChallenge, glossary: glossary ?? lessonGuide?.glossary ?? defaultGlossary(title), resources,
   };
 }

@@ -7,17 +7,17 @@ interface Props { lesson: Lesson; index: number; total: number; completed: boole
 
 export function LessonWorkspace({ lesson, index, total, completed, savedCode, onCodeChange, onComplete, onNavigate }: Props) {
   const [mobileTab, setMobileTab] = useState<'lesson' | 'playground'>('lesson');
-  const [practiceComplete, setPracticeComplete] = useState(lesson.completion === 'read');
+  const [practiceComplete, setPracticeComplete] = useState(lesson.completion === 'read' || lesson.completion === 'optional');
   const [lessonRatio, setLessonRatio] = useState(48);
   const [isResizing, setIsResizing] = useState(false);
   const workspaceRef = useRef<HTMLElement>(null);
   const resizingRef = useRef(false);
-  const hasPlayground = lesson.completion !== 'read';
-  useEffect(() => { setMobileTab('lesson'); setPracticeComplete(lesson.completion === 'read'); }, [lesson.id, lesson.completion]);
+  const hasPlayground = lesson.completion !== 'read' && lesson.completion !== 'optional';
+  useEffect(() => { setMobileTab('lesson'); setPracticeComplete(lesson.completion === 'read' || lesson.completion === 'optional'); }, [lesson.id, lesson.completion]);
   useEffect(() => () => { document.body.classList.remove('is-workspace-resizing'); }, []);
   const previous = () => onNavigate(index - 1); const next = () => onNavigate(index + 1);
   const canComplete = completed || practiceComplete;
-  const hasNext = index < total - 1 && completed;
+  const hasNext = index < total - 1 && (completed || lesson.completion === 'optional');
   const clampRatio = (value: number) => Math.min(70, Math.max(30, value));
   const stopResizing = (event?: ReactPointerEvent<HTMLDivElement>) => {
     if (event && typeof event.currentTarget.hasPointerCapture === 'function' && event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
