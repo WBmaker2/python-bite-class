@@ -2,7 +2,7 @@
 
 - date: 2026-09-04
 - target: `파이썬 한입 교실` 데스크톱 학습 화면
-- public result: [GitHub Pages](https://wbmaker2.github.io/python-bite-class/) (이번 요청에서는 배포하지 않아 이전 릴리스)
+- public result: [GitHub Pages](https://wbmaker2.github.io/python-bite-class/) (v0.2.2.0 배포 완료)
 - Stage 0 status: `ready`
 - route=design-system
 - observed-statuses=ui-ux-pro-max:filesystem-only, design-system:runtime-available, impeccable:runtime-available, product-design:audit:runtime-available, design-review:runtime-available, qa:runtime-available, built-in:built-in
@@ -62,4 +62,16 @@ hover 상태에서 분할선의 강조 pseudo-element와 화살표 opacity가 1�
 
 데스크톱에서 설명이 너무 좁거나 코드 실습이 작게 느껴지면 가운데 세로 경계선에 마우스를 올려 `↔` 표시를 확인한 뒤 좌우로 드래그하면 됩니다. 키보드만 사용할 때는 경계선을 Tab으로 선택하고 방향키를 누르며, `Home`과 `End`로 빠르게 끝 폭으로 이동할 수 있습니다. 900px 이하에서는 화면이 좁아 분할선을 숨기고 기존 세로·탭 방식으로 읽습니다.
 
-이번 요청에는 커밋·푸시·배포가 포함되지 않았으며, 기존 사용자 작업 파일은 stage·삭제·복원하지 않았습니다.
+## 공개 배포 증거
+
+- PR: [#1 feat: add resizable lesson workspace](https://github.com/WBmaker2/python-bite-class/pull/1) 병합 완료
+- `main` 병합 커밋: `e6babe4857dc315e165bc6da1f2e71246445e68b`
+- [GitHub Actions run 33848280198](https://github.com/WBmaker2/python-bite-class/actions/runs/33848280198): build와 deploy 모두 `success`
+- 공개 URL HTTP 응답: `HTTP/2 200`, `last-modified: Fri, 04 Sep 2026 07:26:42 GMT`
+- 공개 브라우저(1280px): 목차 220px, 기본 설명 501.117px·분할선 16px·실습 542.883px; 드래그 후 설명 622.188px·실습 421.805px
+- 공개 브라우저 키보드: `ArrowLeft` → 55.5969%, `Home` → 30%, `End` → 70%
+- 공개 브라우저(375/320px): 분할선 숨김, 세로·탭 흐름 유지, `scrollWidth === clientWidth`
+- 공개 브라우저 콘솔 오류: 0건
+- Actions에는 사용 중인 일부 액션의 Node.js 20 deprecation 안내가 annotation으로 남았지만, 배포 결과에는 영향을 주지 않았습니다.
+
+커밋·푸시·배포를 완료했으며, 기존 사용자 작업 파일은 stage·삭제·복원하지 않았습니다.

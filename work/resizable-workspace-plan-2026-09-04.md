@@ -3,7 +3,7 @@
 - 작성일: 2026-09-04
 - 대상: `파이썬 한입 교실` 데스크톱 학습 화면
 - 요청: 왼쪽 목차 폭을 조금 줄이고, 가운데 설명과 오른쪽 코드 실습 사이 경계선을 드래그해 두 패널의 가로 폭을 조절
-- 상태: 구현 및 브라우저 검증 완료 (커밋·푸시·배포는 이번 요청 범위에 없음)
+- 상태: 구현·브라우저 검증·커밋·푸시·GitHub Pages 배포 완료
 - 선행 변경: 지난 사이클의 viewport 고정·목차/설명 내부 스크롤 변경이 작업 트리에 아직 커밋되지 않았으므로 그대로 보존
 
 ## 1. 기준선 확인
@@ -91,4 +91,4 @@
 - 반응형: 375×812 및 320×800에서 분할선은 숨겨지고 workspace는 세로 흐름으로 유지되며, body/document 가로 `scrollWidth`가 `clientWidth`와 같았습니다. 768px·900px에서도 숨김, 901px에서만 데스크톱 분할선을 확인했습니다.
 - 콘솔: 로컬 브라우저 오류 로그 0건.
 - 자동 검사: `npm test -- --run` 7개 파일·38개 통과, `npm run typecheck`, `npm run lint`, `npm run build`, `git diff --check` 통과 (빌드의 기존 chunk 크기 안내만 출력). 포인터 down/move/up, 30–70% clamp, pointer capture 정리 회귀 테스트도 포함했습니다.
-- 공개 결과: [GitHub Pages](https://wbmaker2.github.io/python-bite-class/)는 이번 요청에서 배포하지 않아 이전 릴리스 상태입니다.
+- 공개 결과: [GitHub Pages](https://wbmaker2.github.io/python-bite-class/)에 v0.2.2.0이 배포되었습니다. PR #1 병합 커밋은 `e6babe4`이며 Pages Actions `33848280198`의 build/deploy가 모두 성공했습니다.
