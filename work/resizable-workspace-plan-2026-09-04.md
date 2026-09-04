@@ -90,5 +90,5 @@
 - 키보드: separator 포커스 상태에서 `ArrowLeft/Right`가 4%씩 이동하고 `Home`은 30%, `End`는 70%로 이동했습니다. 좌우 끝을 넘는 포인터 드래그도 각각 30%·70%에서 clamp되었습니다.
 - 반응형: 375×812 및 320×800에서 분할선은 숨겨지고 workspace는 세로 흐름으로 유지되며, body/document 가로 `scrollWidth`가 `clientWidth`와 같았습니다. 768px·900px에서도 숨김, 901px에서만 데스크톱 분할선을 확인했습니다.
 - 콘솔: 로컬 브라우저 오류 로그 0건.
-- 자동 검사: `npm test -- --run` 7개 파일·37개 통과, `npm run typecheck`, `npm run lint`, `npm run build`, `git diff --check` 통과 (빌드의 기존 chunk 크기 안내만 출력).
+- 자동 검사: `npm test -- --run` 7개 파일·38개 통과, `npm run typecheck`, `npm run lint`, `npm run build`, `git diff --check` 통과 (빌드의 기존 chunk 크기 안내만 출력). 포인터 down/move/up, 30–70% clamp, pointer capture 정리 회귀 테스트도 포함했습니다.
 - 공개 결과: [GitHub Pages](https://wbmaker2.github.io/python-bite-class/)는 이번 요청에서 배포하지 않아 이전 릴리스 상태입니다.

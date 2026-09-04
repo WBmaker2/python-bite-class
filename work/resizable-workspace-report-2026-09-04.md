@@ -52,7 +52,7 @@ hover 상태에서 분할선의 강조 pseudo-element와 화살표 opacity가 1�
 
 ## 자동 검사
 
-- `npm test -- --run`: 7개 파일, 37개 테스트 통과
+- `npm test -- --run`: 7개 파일, 38개 테스트 통과 (키보드 조절과 포인터 드래그·clamp·정리 회귀 포함)
 - `npm run typecheck`: 통과
 - `npm run lint`: 통과
 - `npm run build`: 통과 (Vite의 기존 chunk 크기 안내만 출력)
