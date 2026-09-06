@@ -29,6 +29,11 @@ describe('checkChallenge', () => {
     const changed = 'score = 10\nscore += 6\nscore -= 3\nprint(score)';
     expect(checkChallenge('13', '13', [{ mode: 'changed', value: '', feedback: '연산 과정을 바꿨어요.' }], changed, starter)).toEqual({ passed: true, message: '연산 과정을 바꿨어요.' });
   });
+  it('rejects an unrelated appended line when the challenge result did not change', () => {
+    const starter = 'score = 10\nscore += 5\nscore -= 2\nprint(score)';
+    const unrelated = `${starter}\nunused = 1`;
+    expect(checkChallenge('13', '13', [{ mode: 'changed', value: '', feedback: '좋아요' }], unrelated, starter).passed).toBe(false);
+  });
   it('does not treat whitespace or comment-only edits as a meaningful change', () => {
     const starter = 'score = 10\nscore += 5\nscore -= 2\nprint(score)';
     const commentOnly = '# 계산 메모\nscore = 10\nscore += 5\nscore -= 2\nprint(score)';
@@ -39,9 +44,11 @@ describe('checkChallenge', () => {
     expect(checkChallenge('시작 문장', '시작 문장', [{ mode: 'changed', value: '', feedback: '좋아요' }], 'same', 'same').passed).toBe(false);
   });
   it('accepts either float or bool for the data type challenge', () => {
-    const check = [{ mode: 'regex' as const, value: '(?:^|\\n)(?:float|bool)(?:$|\\n)', feedback: '좋아요' }];
+    const check = [{ mode: 'regex' as const, value: '(?:^|\\n)(?:(?:float|bool)|<class [^\\n]*(?:float|bool)[^\\n]*>)(?:$|\\n)', feedback: '좋아요' }];
     expect(checkChallenge('int\nstr\nfloat', 'int\nstr', check, 'changed', 'starter').passed).toBe(true);
     expect(checkChallenge('int\nstr\nbool', 'int\nstr', check, 'changed', 'starter').passed).toBe(true);
+    expect(checkChallenge("int\nstr\n<class 'float'>", 'int\nstr', check, 'changed', 'starter').passed).toBe(true);
+    expect(checkChallenge("int\nstr\n<class 'bool'>", 'int\nstr', check, 'changed', 'starter').passed).toBe(true);
     expect(checkChallenge('int\nstr', 'int\nstr', check, 'changed', 'starter').passed).toBe(false);
   });
   it('requires a fourth number while allowing any resulting sum', () => {
@@ -62,6 +69,14 @@ describe('checkChallenge', () => {
     expect(checkChallenge('새 항목\n첫 줄\n둘째 줄', '첫 줄\n둘째 줄', check, 'changed', 'starter').passed).toBe(true);
     expect(checkChallenge('첫 줄\n새 항목\n둘째 줄', '첫 줄\n둘째 줄', check, 'changed', 'starter').passed).toBe(true);
     expect(checkChallenge('첫 줄\n둘째 줄\n새 항목', '첫 줄\n둘째 줄', check, 'changed', 'starter').passed).toBe(true);
+  });
+  it('rejects a print-only addition for a collection challenge', () => {
+    const check = [{ mode: 'appended' as const, value: '', feedback: '목록을 확장했어요.' }];
+    const starter = 'items = ["첫 줄", "둘째 줄"]\nfor item in items:\n    print(item)';
+    const printOnly = `${starter}\nprint("새 항목")`;
+    expect(checkChallenge('첫 줄\n둘째 줄\n새 항목', '첫 줄\n둘째 줄', check, printOnly, starter).passed).toBe(false);
+    const withCollectionChange = `${starter}\nitems.append("새 항목")`;
+    expect(checkChallenge('첫 줄\n둘째 줄\n새 항목', '첫 줄\n둘째 줄', check, withCollectionChange, starter).passed).toBe(true);
   });
   it('rejects removed, reordered, or not-added original lines', () => {
     const check = [{ mode: 'appended' as const, value: '', feedback: '목록을 확장했어요.' }];

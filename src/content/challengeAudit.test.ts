@@ -34,6 +34,12 @@ describe('challenge answer audit', () => {
     appendedIds.forEach((id) => expect(challenge(id).some((check) => check.mode === 'appended'), id).toBe(true));
   });
 
+  it('anchors every changed challenge to its learning code flow', () => {
+    lessons.filter((lesson) => lesson.challenge?.checks?.some((check) => check.mode === 'changed')).forEach((lesson) => {
+      expect(lesson.challenge?.sourcePatterns?.length, `${lesson.id}:sourcePatterns`).toBeGreaterThan(0);
+    });
+  });
+
   it('keeps exact checks only for explicit target results', () => {
     const quotient = lessons.find((lesson) => lesson.id === 'chapter-6-1');
     expect(quotient?.starterCode).toContain('a // b');
@@ -64,6 +70,8 @@ describe('challenge answer audit', () => {
     expect(lessonText).toContain('math.fabs(x)');
     expect(lessonText).toContain('절대값');
     expect(lesson?.challenge?.hint).toContain('math.fabs(-3.5)');
+    expect(lesson?.expectedOutput).toBe('5.0\n3.5');
+    expect(lesson?.starterCode).toContain('print(math.fabs(-3.5))');
   });
 
   it('keeps collection additions observable in the output', () => {
@@ -78,12 +86,14 @@ describe('challenge answer audit', () => {
       { mode: 'contains', value: '테이프', feedback: '테이프 부족 결과를 확인했어요.' },
       { mode: 'changed', value: '', feedback: '함수가 여러 준비물의 부족 여부를 확인했어요.' },
     ]);
-    expect(challenge('chapter-11-5')).toEqual([{ mode: 'appended', value: '', feedback: '준비가 끝난 물건 안내도 추가했어요.' }]);
+    expect(challenge('chapter-11-5')).toEqual([{ mode: 'appended', value: '', feedback: '부족한 물건과 준비가 끝난 물건을 나누어 안내했어요.' }]);
   });
 
   it('makes the final project prompt require a changed missing-items result', () => {
     const finalLesson = lessons.find((lesson) => lesson.id === 'chapter-11-8');
-    expect(finalLesson?.challenge?.prompt).toContain('준비 필요 결과가 달라지도록');
-    expect(finalLesson?.challenge?.checks).toEqual([{ mode: 'changed', value: '', feedback: '나의 준비물과 수량으로 프로젝트 결과를 바꿨어요.' }]);
+    expect(finalLesson?.challenge?.prompt).toContain('supplies와 needed');
+    expect(finalLesson?.challenge?.checks).toEqual([{ mode: 'changed', value: '', feedback: '나의 준비물과 수량으로 두 상황을 확인했어요.' }]);
+    expect(finalLesson?.starterCode).toContain('모두 준비됐어요!');
+    expect(finalLesson?.challenge?.sourcePatterns).toContain('if\\s+missing');
   });
 });
