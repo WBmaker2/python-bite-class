@@ -23,14 +23,20 @@ export function usePythonRunner() {
     workerRef.current = worker;
     worker.onmessage = (event: MessageEvent<Record<string, string>>) => {
       const { type } = event.data;
-      if (type === 'status') { setState(event.data.status === 'loading' ? 'loading' : 'running'); return; }
+      if (type === 'status') {
+        if (event.data.status === 'loading') { setState('loading'); return; }
+        if (timerRef.current) clearTimeout(timerRef.current);
+        setState('running');
+        timerRef.current = setTimeout(() => { setOutputs([{ text: '코드 실행이 5초를 넘어 멈췄어요. 반복문이 끝나는지 확인해 보세요.', kind: 'status' }]); stop('timeout'); }, 5000);
+        return;
+      }
       if (type === 'stdout' || type === 'stderr') setOutputs((items) => [...items, { text: event.data.text ?? '', kind: type }]);
       if (type === 'done') { setState('done'); stop('done'); }
       if (type === 'output-limit') { setOutputs((items) => [...items, { text: '출력이 너무 많아 실행을 멈췄어요. 반복문을 확인해 보세요.', kind: 'status' }]); stop('error'); }
       if (type === 'error') { setErrorHelp(getErrorGuidance(event.data.message ?? '')); setOutputs((items) => [...items, { text: event.data.message ?? '오류', kind: 'stderr' }]); stop('error'); }
     };
     worker.onerror = (event) => { setErrorHelp({ type: '실행 오류', message: event.message }); stop('error'); };
-    timerRef.current = setTimeout(() => { setOutputs([{ text: '5초가 지나 실행을 멈췄어요. 반복문이 끝나는지 확인해 보세요.', kind: 'status' }]); stop('timeout'); }, 5000);
+    timerRef.current = setTimeout(() => { setOutputs([{ text: '파이썬 준비가 오래 걸리고 있어요. 네트워크를 확인한 뒤 다시 실행해 보세요.', kind: 'status' }]); stop('timeout'); }, 15000);
     worker.postMessage({ type: 'run', code });
   }, [stop]);
 

@@ -18,6 +18,8 @@ export interface Challenge {
   prompt: string;
   hint: string;
   checks?: OutputCheck[];
+  /** 도전의 핵심 흐름을 지키는지 확인하는 선택형 정규식입니다. */
+  sourcePatterns?: string[];
   /** 학습자가 순서대로 따라 할 수 있는 선택형 안내입니다. */
   steps?: string[];
   /** 출력창에서 무엇을 확인하면 통과인지 알려 주는 문장입니다. */
