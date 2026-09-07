@@ -1,6 +1,8 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import type { Lesson } from '../../content/types';
+import { lessons } from '../../content/chapters';
+import { LessonContent } from './LessonContent';
 import { LessonWorkspace } from './LessonWorkspace';
 
 const readLesson: Lesson = {
@@ -10,6 +12,17 @@ const readLesson: Lesson = {
 };
 
 describe('LessonWorkspace', () => {
+  it('renders the 9.5 glossary definitions in the learner-facing glossary region', () => {
+    const lesson = lessons.find((candidate) => candidate.id === 'chapter-9-5');
+    if (!lesson) throw new Error('9.5 lesson not found');
+    render(<LessonContent lesson={lesson} completed={false} canComplete={false} onComplete={vi.fn()} onPrevious={vi.fn()} onNext={vi.fn()} hasPrevious hasNext />);
+    const glossary = screen.getByRole('region', { name: '핵심 용어' });
+    expect(glossary).toHaveTextContent('sqrt');
+    expect(glossary).toHaveTextContent('math.sqrt(25)');
+    expect(glossary).toHaveTextContent('자기 자신을 곱해');
+    expect(glossary).toHaveTextContent('5.0');
+  });
+
   it('keeps read lessons completable after the playground effect runs', async () => {
     render(<LessonWorkspace lesson={readLesson} index={1} total={69} completed={false} onCodeChange={vi.fn()} onComplete={vi.fn()} onNavigate={vi.fn()} />);
     await waitFor(() => expect(screen.getByRole('button', { name: '학습 완료' })).toBeEnabled());

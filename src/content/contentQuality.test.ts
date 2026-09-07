@@ -54,15 +54,19 @@ describe('beginner content quality', () => {
       'chapter-6-2': ['+=', '-=', '갱신'],
       'chapter-7-1': ['>=', '참', '거짓'],
       'chapter-7-2': ['<='],
-      'chapter-7-4': ['==', '같은지'],
+      'chapter-7-4': ['==', '같은지', 'for', 'range()', 'if', 'print()'],
       'chapter-8-6': ['len()', 'sum()', '*numbers', 'tuple', '펼쳐'],
       'chapter-8-9': ['int()'],
       'chapter-8-8': ['**', '거듭제곱', '3 ** 2'],
       'chapter-9-1': ['round()', '자릿수'],
       'chapter-9-2': ['pi', '원주율', 'round()', 'round(number, ndigits)', 'ndigits', '3.14159', '3.14'],
+      'chapter-9-5': ['dir()', 'dir(math)', 'sqrt', 'math.sqrt(25)', 'pi', 'True', 'False'],
+      'chapter-9-7': ['round()', '**', 'math.pi'],
       'chapter-10-4': ['items()'],
       'chapter-10-6': ['add()'],
+      'chapter-10-7': ['append()', 'for'],
       'chapter-11-3': ['stock.get()', '기본값'],
+      'chapter-11-4': ['items()', 'get()', 'append()', 'return', '언패킹'],
       'chapter-11-8': ['리스트 컴프리헨션', '조건식', '[item for item, amount in plan.items() if stock.get(item, 0) < amount]'],
     };
 
@@ -86,5 +90,37 @@ describe('beginner content quality', () => {
     expect(moduleNameText).toContain('math.__name__');
     expect(moduleNameText).toContain('모듈의 이름');
     expect(moduleNameText).toContain('자료형 이름');
+  });
+
+  it('keeps repeated code glossary entries unique while retaining old aliases', () => {
+    lessons.forEach((lesson) => {
+      const terms = lesson.glossary.map((item) => item.term);
+      expect(new Set(terms).size, lesson.id).toBe(terms.length);
+    });
+    const lesson95 = lessons.find((lesson) => lesson.id === 'chapter-9-5');
+    expect(lesson95?.glossary.some((item) => item.term === 'sqrt')).toBe(true);
+    expect(lesson95?.glossary.some((item) => item.term === 'sqrt')).toBe(true);
+  });
+
+  it('puts print() in the glossary of every executable lesson', () => {
+    const executableLessons = lessons.filter((lesson) => Boolean(lesson.starterCode));
+    expect(executableLessons.length).toBe(54);
+    executableLessons.forEach((lesson) => {
+      expect(lesson.glossary.some((item) => item.term === 'print()'), lesson.id).toBe(true);
+    });
+  });
+
+  it('keeps representative repeated-code terms in the glossary itself', () => {
+    const glossaryTerms = (id: string) => new Set(lessons.find((lesson) => lesson.id === id)?.glossary.map((item) => item.term));
+    [
+      ['chapter-7-4', ['for', 'range()', 'if', 'break', 'print()']],
+      ['chapter-8-2', ['def', 'return', 'print()']],
+      ['chapter-9-7', ['math.pi', 'round()', '**', '*', 'print()']],
+      ['chapter-11-4', ['items()', 'get()', 'append()', '메서드', '언패킹']],
+      ['chapter-11-8', ['리스트 컴프리헨션', '빈 리스트 조건', '언패킹']],
+    ].forEach(([id, expected]) => {
+      const terms = glossaryTerms(id as string);
+      (expected as string[]).forEach((term) => expect(terms).toContain(term));
+    });
   });
 });

@@ -1,5 +1,6 @@
 import type { Challenge, CompletionMode, ConceptBlock, GlossaryItem, Lesson, ResourceLink } from './types';
 import { getLessonGuide } from './lessonGuides';
+import { mergeCodeGlossary } from './codeGlossary';
 
 const defaultConcepts = (title: string, summary: string): ConceptBlock[] => [
   { type: 'explanation', title, body: summary },
@@ -98,10 +99,14 @@ export function makeLesson(
       : [...resolvedConcepts, makePracticeExample(chapter, title, summary, starterCode, expectedOutput, challenge, lessonGuide?.exampleCode)]
     : resolvedConcepts;
   const resolvedChallenge = challenge ? addChallengeGuidance(chapter, title, challenge) : undefined;
+  const resolvedGlossary = mergeCodeGlossary(
+    'chapter-' + chapter + '-' + order,
+    glossary ?? lessonGuide?.glossary ?? defaultGlossary(title),
+  );
   return {
     id: `chapter-${chapter}-${order}` as Lesson['id'], chapter, order, title, summary, completion,
     objectives: lessonGuide?.objectives ?? (completion === 'optional' ? ['원할 때 설명을 읽고 모듈 이름 정보의 뜻을 한 문장으로 정리할 수 있어요.'] : completion === 'read' ? ['설명을 읽고 핵심 생각을 한 문장으로 정리할 수 있어요.'] : ['예제 코드를 실행하고 결과를 관찰할 수 있어요.', '한 줄을 바꾸어 나만의 결과를 만들 수 있어요.']),
-    concepts: conceptsWithExample, starterCode, expectedOutput, challenge: resolvedChallenge, glossary: glossary ?? lessonGuide?.glossary ?? defaultGlossary(title), resources,
+    concepts: conceptsWithExample, starterCode, expectedOutput, challenge: resolvedChallenge, glossary: resolvedGlossary, resources,
   };
 }
 
