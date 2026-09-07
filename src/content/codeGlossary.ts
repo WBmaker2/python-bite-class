@@ -80,7 +80,7 @@ const termsByLesson: Record<string, string[]> = {
   'chapter-8-6': ['def', 'return', 'sum()', 'len()', 'tuple', '*numbers', 'print()'], 'chapter-8-7': ['def', 'return', '+', '/', 'print()'],
   'chapter-8-8': ['def', 'return', '**', 'print()'], 'chapter-8-9': ['def', 'return', 'int()', '/', '*', '-', 'print()'],
   'chapter-9-1': ['import', 'math', 'math.sqrt()', 'print()'], 'chapter-9-2': ['from ... import', 'pi', 'round()', 'print()'],
-  'chapter-9-5': ['import', 'math', 'dir()', 'dir(math)', 'in', 'sqrt', 'math.sqrt(25)', 'pi', 'True', 'False', 'print()'], 'chapter-9-6': ['import', 'math', 'print()'],
+  'chapter-9-5': ['import', 'math', 'dir()', 'dir(math)', 'in', 'sqrt', 'math.sqrt(25)', 'pi', 'True', 'False', 'print()'],
   'chapter-9-7': ['import', 'math', 'math.pi', 'round()', '**', '*', 'print()'],
   'chapter-10-1': ['list', 'index', 'len()', 'print()'], 'chapter-10-3': ['tuple', 'index', 'print()'], 'chapter-10-4': ['dict', 'key', 'value', 'for', 'in', 'items()', '언패킹', 'print()'],
   'chapter-10-5': ['list', 'for', 'in', 'print()'], 'chapter-10-6': ['len()', 'add()', 'in', 'True', 'False', 'print()'], 'chapter-10-7': ['list', 'append()', '메서드', 'for', 'in', 'print()'],

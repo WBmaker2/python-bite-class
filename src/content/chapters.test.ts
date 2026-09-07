@@ -44,4 +44,16 @@ describe('lesson content', () => {
     expect(getCompletedLessonCount(completedChapterLessons)).toBe(completedChapterLessons.size);
     expect(getRequiredLessonCount()).toBe(lessons.length - 1);
   });
+
+  it('skips the removed 9.6 lesson while preserving saved progress totals', () => {
+    const lesson95Index = lessons.findIndex((lesson) => lesson.id === 'chapter-9-5');
+    const lesson97Index = lessons.findIndex((lesson) => lesson.id === 'chapter-9-7');
+    const staleCompleted = new Set(['chapter-9-6']);
+
+    expect(lessons.some((lesson) => lesson.id === 'chapter-9-6')).toBe(false);
+    expect(lessons[lesson95Index + 1]?.id).toBe('chapter-9-7');
+    expect(isLessonUnlocked(lesson97Index, new Set(['chapter-9-5', ...staleCompleted]))).toBe(true);
+    expect(getCompletedLessonCount(staleCompleted)).toBe(0);
+    expect(getRequiredLessonCount()).toBe(lessons.length - 1);
+  });
 });

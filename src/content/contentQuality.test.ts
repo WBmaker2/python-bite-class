@@ -82,14 +82,12 @@ describe('beginner content quality', () => {
     });
   });
 
-  it('distinguishes type and module name attributes', () => {
+  it('removes the deleted package lesson and stale cross-lesson references', () => {
     const typeNameText = chapterText(5);
-    const moduleNameLesson = lessons.find((lesson) => lesson.id === 'chapter-9-6');
-    const moduleNameText = [moduleNameLesson?.summary, ...(moduleNameLesson?.concepts ?? []).flatMap((concept) => [concept.title ?? '', concept.body, concept.code ?? '']), ...(moduleNameLesson?.glossary ?? []).flatMap((item) => [item.term, item.definition])].join(' ');
     expect(typeNameText).toContain('자료형의 이름');
-    expect(moduleNameText).toContain('math.__name__');
-    expect(moduleNameText).toContain('모듈의 이름');
-    expect(moduleNameText).toContain('자료형 이름');
+    expect(lessons.some((lesson) => lesson.id === 'chapter-9-6')).toBe(false);
+    expect(lessons.some((lesson) => lesson.title === '패키지와 모듈 정리')).toBe(false);
+    expect(typeNameText).not.toContain('9.6');
   });
 
   it('keeps repeated code glossary entries unique while retaining old aliases', () => {
@@ -104,7 +102,7 @@ describe('beginner content quality', () => {
 
   it('puts print() in the glossary of every executable lesson', () => {
     const executableLessons = lessons.filter((lesson) => Boolean(lesson.starterCode));
-    expect(executableLessons.length).toBe(54);
+    expect(executableLessons.length).toBe(53);
     executableLessons.forEach((lesson) => {
       expect(lesson.glossary.some((item) => item.term === 'print()'), lesson.id).toBe(true);
     });
