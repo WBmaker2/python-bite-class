@@ -56,4 +56,16 @@ describe('lesson content', () => {
     expect(getCompletedLessonCount(staleCompleted)).toBe(0);
     expect(getRequiredLessonCount()).toBe(lessons.length - 1);
   });
+
+  it('skips the removed 10.6 lesson while preserving saved progress totals', () => {
+    const lesson105Index = lessons.findIndex((lesson) => lesson.id === 'chapter-10-5');
+    const lesson107Index = lessons.findIndex((lesson) => lesson.id === 'chapter-10-7');
+    const staleCompleted = new Set(['chapter-10-6']);
+
+    expect(lessons.some((lesson) => lesson.id === 'chapter-10-6')).toBe(false);
+    expect(lessons[lesson105Index + 1]?.id).toBe('chapter-10-7');
+    expect(lessons[lesson107Index]?.title).toBe('참조');
+    expect(isLessonUnlocked(lesson107Index, new Set(['chapter-10-5', ...staleCompleted]))).toBe(true);
+    expect(getCompletedLessonCount(staleCompleted)).toBe(0);
+  });
 });

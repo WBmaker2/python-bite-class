@@ -52,7 +52,6 @@ describe('challenge answer audit', () => {
       { mode: 'changed', value: '', feedback: '추가한 숫자까지 합계를 확인했어요.' },
     ]);
     expect(challenge('chapter-8-8').some((check) => check.mode === 'equals')).toBe(false);
-    expect(challenge('chapter-10-6')).toEqual([{ mode: 'equals', value: '3\nTrue', feedback: '새 태그를 추가해 집합의 크기가 늘었어요.' }]);
   });
 
   it('provides an else branch for the different-message if challenge', () => {

@@ -63,7 +63,6 @@ describe('beginner content quality', () => {
       'chapter-9-5': ['dir()', 'dir(math)', 'sqrt', 'math.sqrt(25)', 'pi', 'True', 'False'],
       'chapter-9-7': ['round()', '**', 'math.pi'],
       'chapter-10-4': ['items()'],
-      'chapter-10-6': ['add()'],
       'chapter-10-7': ['append()', 'for'],
       'chapter-11-3': ['stock.get()', '기본값'],
       'chapter-11-4': ['items()', 'get()', 'append()', 'return', '언패킹'],
@@ -102,7 +101,7 @@ describe('beginner content quality', () => {
 
   it('puts print() in the glossary of every executable lesson', () => {
     const executableLessons = lessons.filter((lesson) => Boolean(lesson.starterCode));
-    expect(executableLessons.length).toBe(53);
+    expect(executableLessons.length).toBe(52);
     executableLessons.forEach((lesson) => {
       expect(lesson.glossary.some((item) => item.term === 'print()'), lesson.id).toBe(true);
     });
