@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent as ReactPointerEvent } from 'react';
 import type { Lesson } from '../../content/types';
+import { getNextRequiredLessonIndex, getPreviousRequiredLessonIndex } from '../../content/chapters';
 import { LessonContent } from './LessonContent';
 import { PlaygroundPanel } from '../playground/PlaygroundPanel';
 
 interface Props { lesson: Lesson; index: number; total: number; completed: boolean; savedCode?: string; onCodeChange: (code: string) => void; onComplete: () => void; onNavigate: (index: number) => void; }
 
-export function LessonWorkspace({ lesson, index, total, completed, savedCode, onCodeChange, onComplete, onNavigate }: Props) {
+export function LessonWorkspace({ lesson, index, completed, savedCode, onCodeChange, onComplete, onNavigate }: Props) {
   const [mobileTab, setMobileTab] = useState<'lesson' | 'playground'>('lesson');
   const [practiceComplete, setPracticeComplete] = useState(lesson.completion === 'read' || lesson.completion === 'optional');
   const [lessonRatio, setLessonRatio] = useState(48);
@@ -15,9 +16,9 @@ export function LessonWorkspace({ lesson, index, total, completed, savedCode, on
   const hasPlayground = lesson.completion !== 'read' && lesson.completion !== 'optional';
   useEffect(() => { setMobileTab('lesson'); setPracticeComplete(lesson.completion === 'read' || lesson.completion === 'optional'); }, [lesson.id, lesson.completion]);
   useEffect(() => () => { document.body.classList.remove('is-workspace-resizing'); }, []);
-  const previous = () => onNavigate(index - 1); const next = () => onNavigate(index + 1);
+  const previous = () => onNavigate(getPreviousRequiredLessonIndex(index)); const next = () => onNavigate(getNextRequiredLessonIndex(index));
   const canComplete = completed || practiceComplete;
-  const hasNext = index < total - 1 && (completed || lesson.completion === 'optional');
+  const hasNext = getNextRequiredLessonIndex(index) >= 0 && (completed || lesson.completion === 'optional');
   const clampRatio = (value: number) => Math.min(70, Math.max(30, value));
   const stopResizing = (event?: ReactPointerEvent<HTMLDivElement>) => {
     if (event && typeof event.currentTarget.hasPointerCapture === 'function' && event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);

@@ -41,3 +41,17 @@ export function getCompletedLessonCount(completed: ReadonlySet<string>) {
 export function getRequiredLessonCount() {
   return lessons.filter((lesson) => lesson.completion !== 'optional').length;
 }
+
+export function getNextRequiredLessonIndex(index: number) {
+  for (let next = index + 1; next < lessons.length; next += 1) {
+    if (lessons[next].completion !== 'optional') return next;
+  }
+  return -1;
+}
+
+export function getPreviousRequiredLessonIndex(index: number) {
+  for (let previous = index - 1; previous >= 0; previous -= 1) {
+    if (lessons[previous].completion !== 'optional') return previous;
+  }
+  return -1;
+}

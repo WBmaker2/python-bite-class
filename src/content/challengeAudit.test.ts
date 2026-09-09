@@ -27,10 +27,10 @@ describe('challenge answer audit', () => {
   });
 
   it('uses change or append checks for free-choice and collection additions', () => {
-    const changedIds = ['chapter-2-2', 'chapter-3-3', 'chapter-4-3', 'chapter-4-4', 'chapter-4-5', 'chapter-5-2', 'chapter-5-3', 'chapter-5-5', 'chapter-5-7', 'chapter-5-8', 'chapter-6-1', 'chapter-6-2', 'chapter-8-2', 'chapter-8-7', 'chapter-8-8', 'chapter-9-1', 'chapter-9-2', 'chapter-9-7', 'chapter-10-1', 'chapter-10-3', 'chapter-10-8', 'chapter-11-1', 'chapter-11-2', 'chapter-11-3', 'chapter-11-5', 'chapter-11-6'];
+    const changedIds = ['chapter-2-2', 'chapter-3-3', 'chapter-4-4', 'chapter-4-5', 'chapter-5-2', 'chapter-5-3', 'chapter-5-5', 'chapter-5-7', 'chapter-5-8', 'chapter-6-1', 'chapter-6-2', 'chapter-8-2', 'chapter-8-7', 'chapter-8-8', 'chapter-9-1', 'chapter-9-2', 'chapter-9-7', 'chapter-10-1', 'chapter-10-3', 'chapter-10-8', 'chapter-11-1', 'chapter-11-2', 'chapter-11-3', 'chapter-11-5', 'chapter-11-6'];
     changedIds.forEach((id) => expect(challenge(id).some((check) => check.mode === 'changed'), id).toBe(true));
 
-    const appendedIds = ['chapter-2-3', 'chapter-3-4', 'chapter-10-4', 'chapter-10-5', 'chapter-10-7', 'chapter-10-9'];
+    const appendedIds = ['chapter-2-3', 'chapter-10-4', 'chapter-10-5'];
     appendedIds.forEach((id) => expect(challenge(id).some((check) => check.mode === 'appended'), id).toBe(true));
   });
 
@@ -47,10 +47,7 @@ describe('challenge answer audit', () => {
     expect(challenge('chapter-6-3')).toEqual([{ mode: 'equals', value: '20', feedback: '괄호로 계산 순서를 바꿨어요.' }]);
     expect(challenge('chapter-7-3')[0].value).toBe('1\n2\n3\n4\n5\n6\n7\n8\n9\n10');
     expect(challenge('chapter-7-6')).toEqual([{ mode: 'equals', value: '3\n6\n9\n12\n15\n18\n21\n24\n27\n30', feedback: '조건과 반복으로 여러 값을 골랐어요.' }]);
-    expect(challenge('chapter-8-6')).toEqual([
-      { mode: 'contains', value: '숫자 개수: 4', feedback: '숫자를 하나 더 넣었어요.' },
-      { mode: 'changed', value: '', feedback: '추가한 숫자까지 합계를 확인했어요.' },
-    ]);
+    expect(lessons.find((lesson) => lesson.id === 'chapter-8-6')?.completion).toBe('optional');
     expect(challenge('chapter-8-8').some((check) => check.mode === 'equals')).toBe(false);
   });
 

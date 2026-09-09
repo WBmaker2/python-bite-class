@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { chapters, getChapterLessonCount, getChapterProgress, getCompletedLessonCount, getRequiredLessonCount, isLessonUnlocked, lessons } from './chapters';
+import { chapters, getChapterLessonCount, getChapterProgress, getCompletedLessonCount, getNextRequiredLessonIndex, getRequiredLessonCount, isLessonUnlocked, lessons } from './chapters';
 
 describe('lesson content', () => {
   it('covers chapters 1 through 11 with hierarchical steps', () => {
     expect(chapters.map((chapter) => chapter.number)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
     expect(new Set(lessons.map((lesson) => lesson.id)).size).toBe(lessons.length);
-    expect(lessons.length).toBeGreaterThan(50);
+    expect(lessons.length).toBe(62);
+    expect(lessons.filter((lesson) => lesson.completion === 'optional')).toHaveLength(5);
+    expect(getRequiredLessonCount()).toBe(57);
     lessons.forEach((lesson) => { expect(lesson.objectives.length).toBeGreaterThan(0); if (lesson.completion === 'run' || lesson.completion === 'challenge') { expect(lesson.starterCode).toBeTruthy(); } if (lesson.completion === 'challenge') { expect(lesson.challenge?.prompt).toBeTruthy(); } });
   });
 
@@ -42,7 +44,7 @@ describe('lesson content', () => {
     expect(chapter).toBeDefined();
     expect(getChapterProgress(chapter!, completedChapterLessons)).toBe(getChapterLessonCount(chapter!));
     expect(getCompletedLessonCount(completedChapterLessons)).toBe(completedChapterLessons.size);
-    expect(getRequiredLessonCount()).toBe(lessons.length - 1);
+    expect(getRequiredLessonCount()).toBe(57);
   });
 
   it('skips the removed 9.6 lesson while preserving saved progress totals', () => {
@@ -54,7 +56,7 @@ describe('lesson content', () => {
     expect(lessons[lesson95Index + 1]?.id).toBe('chapter-9-7');
     expect(isLessonUnlocked(lesson97Index, new Set(['chapter-9-5', ...staleCompleted]))).toBe(true);
     expect(getCompletedLessonCount(staleCompleted)).toBe(0);
-    expect(getRequiredLessonCount()).toBe(lessons.length - 1);
+    expect(getRequiredLessonCount()).toBe(57);
   });
 
   it('skips the removed 10.6 lesson while preserving saved progress totals', () => {
@@ -64,8 +66,23 @@ describe('lesson content', () => {
 
     expect(lessons.some((lesson) => lesson.id === 'chapter-10-6')).toBe(false);
     expect(lessons[lesson105Index + 1]?.id).toBe('chapter-10-7');
-    expect(lessons[lesson107Index]?.title).toBe('참조');
+    expect(lessons[lesson107Index]?.title).toBe('참조 더 알아보기');
+    expect(lessons[lesson107Index]?.completion).toBe('optional');
     expect(isLessonUnlocked(lesson107Index, new Set(['chapter-10-5', ...staleCompleted]))).toBe(true);
     expect(getCompletedLessonCount(staleCompleted)).toBe(0);
+  });
+
+  it('removes the four merged lesson IDs and keeps the merged lesson as the next required step', () => {
+    ['chapter-2-4', 'chapter-3-4', 'chapter-4-3', 'chapter-10-9'].forEach((id) => {
+      expect(lessons.some((lesson) => lesson.id === id)).toBe(false);
+    });
+    ['chapter-2-3', 'chapter-3-3', 'chapter-4-5', 'chapter-10-4'].forEach((id) => {
+      expect(lessons.some((lesson) => lesson.id === id)).toBe(true);
+    });
+    lessons.forEach((lesson, index) => {
+      if (lesson.completion === 'optional') return;
+      const next = getNextRequiredLessonIndex(index);
+      if (next >= 0) expect(lessons[next].completion).not.toBe('optional');
+    });
   });
 });

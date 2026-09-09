@@ -36,6 +36,11 @@ describe('LessonWorkspace', () => {
     expect(screen.getByRole('region', { name: '전체 학습 완료' })).toHaveTextContent('전체 학습을 마쳤어요!');
   });
 
+  it('highlights the next required lesson after completion', () => {
+    render(<LessonContent lesson={readLesson} completed canComplete onComplete={vi.fn()} onPrevious={vi.fn()} onNext={vi.fn()} hasPrevious hasNext />);
+    expect(screen.getByRole('button', { name: '다음 학습 →' })).toHaveClass('gi-pulse');
+  });
+
   it('keeps read lessons completable after the playground effect runs', async () => {
     render(<LessonWorkspace lesson={readLesson} index={1} total={69} completed={false} onCodeChange={vi.fn()} onComplete={vi.fn()} onNavigate={vi.fn()} />);
     await waitFor(() => expect(screen.getByRole('button', { name: '학습 완료' })).toBeEnabled());

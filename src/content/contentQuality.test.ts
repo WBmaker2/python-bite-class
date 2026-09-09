@@ -10,7 +10,7 @@ describe('beginner content quality', () => {
   it('keeps the first output practice unique and moves later practice to concepts', () => {
     expect(lessons.find((lesson) => lesson.id === 'chapter-1-4')?.completion).toBe('run');
     expect(lessons.find((lesson) => lesson.id === 'chapter-2-1')?.completion).toBe('read');
-    expect(lessons.find((lesson) => lesson.id === 'chapter-2-4')?.completion).toBe('read');
+    expect(lessons.find((lesson) => lesson.id === 'chapter-2-3')?.completion).toBe('challenge');
     expect(lessons.find((lesson) => lesson.id === 'chapter-3-1')?.completion).toBe('read');
     expect(lessons.find((lesson) => lesson.id === 'chapter-3-2')?.completion).toBe('read');
     expect(lessons.find((lesson) => lesson.id === 'chapter-4-1')?.completion).toBe('read');
@@ -49,16 +49,16 @@ describe('beginner content quality', () => {
     const requiredTermsByLesson: Record<string, string[]> = {
       'chapter-2-2': ['변수', '할당', '='],
       'chapter-2-3': ['리스트', 'for ... in', '반복'],
-      'chapter-5-6': ['type(...).__name__', '자료형 이름', 'float', 'bool'],
+      'chapter-5-6': ['type()', '자료형', 'float', 'bool'],
       'chapter-5-7': ['if', 'True', '조건'],
       'chapter-6-2': ['+=', '-=', '갱신'],
       'chapter-7-1': ['>=', '참', '거짓'],
       'chapter-7-2': ['<='],
       'chapter-7-4': ['==', '같은지', 'for', 'range()', 'if', 'print()'],
-      'chapter-8-6': ['len()', 'sum()', '*numbers', 'tuple', '펼쳐'],
+      'chapter-8-6': ['가변 인수', '*args', 'sum()'],
       'chapter-8-9': ['int()'],
       'chapter-8-8': ['**', '거듭제곱', '3 ** 2'],
-      'chapter-9-1': ['round()', '자릿수'],
+      'chapter-9-1': ['math.sqrt(x)', '제곱근', 'math.fabs(x)', '절대값'],
       'chapter-9-2': ['pi', '원주율', 'round()', 'round(number, ndigits)', 'ndigits', '3.14159', '3.14'],
       'chapter-9-5': ['dir()', 'dir(math)', 'sqrt', 'math.sqrt(25)', 'pi', 'True', 'False'],
       'chapter-9-7': ['round()', '**', 'math.pi'],
@@ -84,7 +84,7 @@ describe('beginner content quality', () => {
 
   it('removes the deleted package lesson and stale cross-lesson references', () => {
     const typeNameText = chapterText(5);
-    expect(typeNameText).toContain('자료형의 이름');
+    expect(typeNameText).toContain('자료형');
     expect(lessons.some((lesson) => lesson.id === 'chapter-9-6')).toBe(false);
     expect(lessons.some((lesson) => lesson.title === '패키지와 모듈 정리')).toBe(false);
     expect(typeNameText).not.toContain('9.6');
@@ -102,7 +102,7 @@ describe('beginner content quality', () => {
 
   it('puts print() in the glossary of every executable lesson', () => {
     const executableLessons = lessons.filter((lesson) => Boolean(lesson.starterCode));
-    expect(executableLessons.length).toBe(52);
+    expect(executableLessons.length).toBe(47);
     executableLessons.forEach((lesson) => {
       expect(lesson.glossary.some((item) => item.term === 'print()'), lesson.id).toBe(true);
     });
