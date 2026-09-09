@@ -32,7 +32,7 @@ const chapterLifeExample: Record<number, string> = {
   8: '자판기에서 돈과 상품을 넣으면 결과가 나오는 것처럼 함수의 입출력을 읽어요.',
   9: '필요한 계산 도구만 공구함에서 꺼내 쓰는 것처럼 모듈을 사용해요.',
   10: '색깔별 바구니에 물건을 담고 이름표로 찾는 것처럼 자료를 정리해요.',
-  11: '축제 준비물 목록을 확인하고 부족한 물건을 알려 주는 상황으로 연결해요.',
+  11: '시간·용돈·간식·준비물처럼 주변의 작은 문제를 계산하고 확인하는 상황으로 연결해요.',
 };
 
 const firstMeaningfulLine = (code: string) => code.split(/\r?\n/).map((line) => line.trim()).find((line) => line && !line.startsWith('#')) ?? code.trim();
@@ -88,7 +88,7 @@ export function makeLesson(
   expectedOutput?: string,
   challenge?: Challenge,
   concepts?: ConceptBlock[],
-  glossary?: GlossaryItem[],
+  glossary?: GlossaryItem[] | Array<GlossaryItem | [string, string]>,
   resources?: ResourceLink[],
 ): Lesson {
   const lessonGuide = getLessonGuide(chapter, order);
@@ -99,9 +99,10 @@ export function makeLesson(
       : [...resolvedConcepts, makePracticeExample(chapter, title, summary, starterCode, expectedOutput, challenge, lessonGuide?.exampleCode)]
     : resolvedConcepts;
   const resolvedChallenge = challenge ? addChallengeGuidance(chapter, title, challenge) : undefined;
+  const suppliedGlossary = (glossary ?? lessonGuide?.glossary ?? defaultGlossary(title)).map((item) => Array.isArray(item) ? { term: item[0], definition: item[1] } : item);
   const resolvedGlossary = mergeCodeGlossary(
     'chapter-' + chapter + '-' + order,
-    glossary ?? lessonGuide?.glossary ?? defaultGlossary(title),
+    suppliedGlossary,
   );
   return {
     id: `chapter-${chapter}-${order}` as Lesson['id'], chapter, order, title, summary, completion,

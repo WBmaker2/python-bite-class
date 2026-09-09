@@ -26,6 +26,8 @@ export interface Challenge {
   successCriteria?: string[];
   /** 자주 생기는 오답을 미리 피하도록 돕는 문장입니다. */
   commonMistakes?: string[];
+  /** 실행 결과가 코드의 실제 자료와 맞는지 확인하는 제한된 검증 종류입니다. */
+  runtimeCheck?: 'time' | 'allowance' | 'snack' | 'supplies' | 'reading' | 'price';
 }
 
 export interface GlossaryItem {

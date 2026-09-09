@@ -35,6 +35,7 @@
   .learning-banner, .learning-banner img { height: 185px; min-height: 185px; }
   .banner-copy { inset: 20px auto auto 20px; }
   .banner-copy strong { font-size: 28px; }
+  .migration-notice { align-items: flex-start; flex-direction: column; margin: 12px 14px 0; }
   .lesson-heading h2 { font-size: 30px; }
   .concept-block, .glossary-block, .resource-block { grid-template-columns: minmax(0, 64px) minmax(0, 1fr); gap: 10px; min-width: 0; }
   .concept-block > div, .glossary-block > div, .resource-block > div, .challenge-guidance > div { min-width: 0; }

@@ -64,9 +64,10 @@ describe('beginner content quality', () => {
       'chapter-9-7': ['round()', '**', 'math.pi'],
       'chapter-10-4': ['items()'],
       'chapter-10-7': ['append()', 'for'],
-      'chapter-11-3': ['stock.get()', '기본값'],
-      'chapter-11-4': ['items()', 'get()', 'append()', 'return', '언패킹'],
-      'chapter-11-8': ['리스트 컴프리헨션', '조건식', '[item for item, amount in plan.items() if stock.get(item, 0) < amount]'],
+      'chapter-11-1': ['//', '%', 'f-string', 'print()'],
+      'chapter-11-2': ['-=', 'f-string', 'print()'],
+      'chapter-11-3': ['>=', 'if', 'else', '들여쓰기'],
+      'chapter-11-4': ['리스트', 'for', 'len()'],
     };
 
     Object.entries(requiredTermsByLesson).forEach(([lessonId, requiredTerms]) => {
@@ -113,8 +114,8 @@ describe('beginner content quality', () => {
       ['chapter-7-4', ['for', 'range()', 'if', 'break', 'print()']],
       ['chapter-8-2', ['def', 'return', 'print()']],
       ['chapter-9-7', ['math.pi', 'round()', '**', '*', 'print()']],
-      ['chapter-11-4', ['items()', 'get()', 'append()', '메서드', '언패킹']],
-      ['chapter-11-8', ['리스트 컴프리헨션', '빈 리스트 조건', '언패킹']],
+      ['chapter-11-1', ['//', '%', 'print()']],
+      ['chapter-11-6', ['key', 'value', 'print()']],
     ].forEach(([id, expected]) => {
       const terms = glossaryTerms(id as string);
       (expected as string[]).forEach((term) => expect(terms).toContain(term));

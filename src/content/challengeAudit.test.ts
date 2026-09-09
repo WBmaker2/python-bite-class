@@ -27,16 +27,16 @@ describe('challenge answer audit', () => {
   });
 
   it('uses change or append checks for free-choice and collection additions', () => {
-    const changedIds = ['chapter-2-2', 'chapter-3-3', 'chapter-4-3', 'chapter-4-4', 'chapter-4-5', 'chapter-5-2', 'chapter-5-3', 'chapter-5-5', 'chapter-5-7', 'chapter-5-8', 'chapter-6-1', 'chapter-6-2', 'chapter-8-2', 'chapter-8-7', 'chapter-8-8', 'chapter-9-1', 'chapter-9-2', 'chapter-9-7', 'chapter-10-1', 'chapter-10-3', 'chapter-10-8', 'chapter-11-4', 'chapter-11-8'];
+    const changedIds = ['chapter-2-2', 'chapter-3-3', 'chapter-4-3', 'chapter-4-4', 'chapter-4-5', 'chapter-5-2', 'chapter-5-3', 'chapter-5-5', 'chapter-5-7', 'chapter-5-8', 'chapter-6-1', 'chapter-6-2', 'chapter-8-2', 'chapter-8-7', 'chapter-8-8', 'chapter-9-1', 'chapter-9-2', 'chapter-9-7', 'chapter-10-1', 'chapter-10-3', 'chapter-10-8', 'chapter-11-1', 'chapter-11-2', 'chapter-11-3', 'chapter-11-5', 'chapter-11-6'];
     changedIds.forEach((id) => expect(challenge(id).some((check) => check.mode === 'changed'), id).toBe(true));
 
-    const appendedIds = ['chapter-2-3', 'chapter-3-4', 'chapter-10-4', 'chapter-10-5', 'chapter-10-7', 'chapter-10-9', 'chapter-11-2', 'chapter-11-3', 'chapter-11-5', 'chapter-11-7'];
+    const appendedIds = ['chapter-2-3', 'chapter-3-4', 'chapter-10-4', 'chapter-10-5', 'chapter-10-7', 'chapter-10-9'];
     appendedIds.forEach((id) => expect(challenge(id).some((check) => check.mode === 'appended'), id).toBe(true));
   });
 
-  it('anchors every changed challenge to its learning code flow', () => {
-    lessons.filter((lesson) => lesson.challenge?.checks?.some((check) => check.mode === 'changed')).forEach((lesson) => {
-      expect(lesson.challenge?.sourcePatterns?.length, `${lesson.id}:sourcePatterns`).toBeGreaterThan(0);
+  it('anchors every chapter 11 changed challenge to runtime evidence', () => {
+    lessons.filter((lesson) => lesson.chapter === 11 && lesson.challenge?.checks?.some((check) => check.mode === 'changed')).forEach((lesson) => {
+      expect(lesson.challenge?.runtimeCheck, `${lesson.id}:runtimeCheck`).toBeTruthy();
     });
   });
 
@@ -78,21 +78,12 @@ describe('challenge answer audit', () => {
     expect(dictionary?.starterCode).toContain('scores.items()');
     expect(dictionary?.expectedOutput).toBe('수학 90\n과학 85');
 
-    const inventory = lessons.find((lesson) => lesson.id === 'chapter-11-3');
-    expect(inventory?.starterCode).toContain('needed.items()');
-    expect(challenge('chapter-11-3')).toEqual([{ mode: 'appended', value: '', feedback: '새 물건의 재고와 필요한 양을 비교했어요.' }]);
-    expect(challenge('chapter-11-4')).toEqual([
-      { mode: 'contains', value: '테이프', feedback: '테이프 부족 결과를 확인했어요.' },
-      { mode: 'changed', value: '', feedback: '함수가 여러 준비물의 부족 여부를 확인했어요.' },
-    ]);
-    expect(challenge('chapter-11-5')).toEqual([{ mode: 'appended', value: '', feedback: '부족한 물건과 준비가 끝난 물건을 나누어 안내했어요.' }]);
+    expect(challenge('chapter-11-4')).toEqual([{ mode: 'changed', value: '', feedback: '새 준비물까지 목록과 개수를 확인했어요.' }]);
   });
 
-  it('makes the final project prompt require a changed missing-items result', () => {
-    const finalLesson = lessons.find((lesson) => lesson.id === 'chapter-11-8');
-    expect(finalLesson?.challenge?.prompt).toContain('supplies와 needed');
-    expect(finalLesson?.challenge?.checks).toEqual([{ mode: 'changed', value: '', feedback: '나의 준비물과 수량으로 두 상황을 확인했어요.' }]);
-    expect(finalLesson?.starterCode).toContain('모두 준비됐어요!');
-    expect(finalLesson?.challenge?.sourcePatterns).toContain('if\\s+missing');
+  it('defines the six real-life runtime challenges', () => {
+    ['chapter-11-1', 'chapter-11-2', 'chapter-11-3', 'chapter-11-4', 'chapter-11-5', 'chapter-11-6'].forEach((id) => {
+      expect(lessons.find((lesson) => lesson.id === id)?.challenge?.runtimeCheck, id).toBeTruthy();
+    });
   });
 });

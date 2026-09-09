@@ -84,9 +84,9 @@ const termsByLesson: Record<string, string[]> = {
   'chapter-10-1': ['list', 'index', 'len()', 'print()'], 'chapter-10-3': ['tuple', 'index', 'print()'], 'chapter-10-4': ['dict', 'key', 'value', 'for', 'in', 'items()', '언패킹', 'print()'],
   'chapter-10-5': ['list', 'for', 'in', 'print()'], 'chapter-10-7': ['list', 'append()', '메서드', 'for', 'in', 'print()'],
   'chapter-10-8': ['index', 'len()', 'upper()', 'print()'], 'chapter-10-9': ['dict', 'key', 'value', 'for', 'in', 'items()', '언패킹', 'print()'],
-  'chapter-11-2': ['list', 'for', 'in', 'print()'], 'chapter-11-3': ['dict', 'for', 'in', 'items()', 'get()', '메서드', 'if', 'else', '<', '언패킹', 'print()'],
-  'chapter-11-4': ['dict', 'list', 'key', 'value', 'def', 'return', 'for', 'in', 'items()', 'get()', 'append()', '메서드', 'if', '<', '언패킹', 'print()'], 'chapter-11-5': ['list', 'for', 'in', 'print()'],
-  'chapter-11-7': ['list', 'for', 'in', 'print()'], 'chapter-11-8': ['dict', 'key', 'value', 'def', 'return', '리스트 컴프리헨션', 'for', 'in', 'items()', 'get()', '메서드', 'if', 'else', '<', '언패킹', '빈 리스트 조건', 'print()'],
+  'chapter-11-1': ['=', '//', '%', 'print()'], 'chapter-11-2': ['=', '-=', 'print()'],
+  'chapter-11-3': ['=', 'if', 'else', '>=', 'print()'], 'chapter-11-4': ['list', 'for', 'in', 'len()', 'print()'],
+  'chapter-11-5': ['list', 'sum()', 'print()'], 'chapter-11-6': ['dict', 'key', 'value', 'print()'],
 };
 
 const aliases: Record<string, string[]> = {

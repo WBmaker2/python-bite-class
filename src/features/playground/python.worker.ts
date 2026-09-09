@@ -19,7 +19,7 @@ async function boot() {
   send('status', { status: 'ready' });
 }
 
-async function execute(code: string) {
+async function execute(code: string, runtimeCheck?: string) {
   outputLines = 0; outputBytes = 0; outputLimitSent = false;
   try {
     await boot();
@@ -34,7 +34,49 @@ async function execute(code: string) {
     };
     pyodide.setStdout({ batched: (text: string) => capture(text, 'stdout') });
     pyodide.setStderr({ batched: (text: string) => capture(text, 'stderr') });
-    await pyodide.runPythonAsync(code, { globals: createMainModuleGlobals(pyodide) });
+    const executionGlobals: any = createMainModuleGlobals(pyodide);
+    await pyodide.runPythonAsync(code, { globals: executionGlobals });
+    if (runtimeCheck) {
+      executionGlobals.set('__student_code', code);
+      const runtime = pyodide.runPython(`
+import ast, json
+student_globals = globals()
+tree = ast.parse(student_globals['__student_code'])
+runtime_names = ('total_seconds', 'minutes', 'seconds', 'money', 'price', 'supplies', 'pages', 'prices', 'name')
+values = {}
+for key in runtime_names:
+    if key in student_globals:
+        value = student_globals[key]
+        try:
+            values[key] = value.to_py() if hasattr(value, 'to_py') else value
+        except Exception:
+            values[key] = str(value)
+assignments = []
+lookups = []
+for node in ast.walk(tree):
+    if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name):
+        try: assignments.append({'name': node.targets[0].id, 'op': '=', 'value': ast.literal_eval(node.value)})
+        except Exception: pass
+    if isinstance(node, ast.AugAssign) and isinstance(node.target, ast.Name):
+        try: assignments.append({'name': node.target.id, 'op': type(node.op).__name__ == 'Sub' and '-=' or 'other', 'value': ast.literal_eval(node.value)})
+        except Exception: pass
+    if isinstance(node, ast.Subscript) and isinstance(node.value, ast.Name) and node.value.id == 'prices':
+        if isinstance(node.slice, ast.Name) and node.slice.id in student_globals:
+            lookups.append(str(student_globals[node.slice.id]))
+json.dumps({'values': values, 'ast': {
+    'floorDivide': any(isinstance(node, ast.FloorDiv) for node in ast.walk(tree)),
+    'modulo': any(isinstance(node, ast.Mod) for node in ast.walk(tree)),
+    'subtractUpdate': any(isinstance(node, ast.AugAssign) and isinstance(node.op, ast.Sub) for node in ast.walk(tree)),
+    'ifBranch': any(isinstance(node, ast.If) for node in ast.walk(tree)),
+    'loop': any(isinstance(node, (ast.For, ast.While)) for node in ast.walk(tree)),
+    'hasLen': any(isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == 'len' for node in ast.walk(tree)),
+    'hasSum': any(isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == 'sum' for node in ast.walk(tree)),
+    'assignments': assignments,
+    'lookups': lookups,
+}})
+`, { globals: executionGlobals });
+      send('runtime', { runtime: JSON.parse(runtime) });
+    }
     send('done');
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
@@ -43,7 +85,7 @@ async function execute(code: string) {
   }
 }
 
-self.onmessage = (event: MessageEvent<{ type: string; code?: string }>) => {
-  if (event.data.type === 'run' && event.data.code !== undefined) void execute(event.data.code);
+self.onmessage = (event: MessageEvent<{ type: string; code?: string; runtimeCheck?: string }>) => {
+  if (event.data.type === 'run' && event.data.code !== undefined) void execute(event.data.code, event.data.runtimeCheck);
   if (event.data.type === 'reset') { pyodide = undefined; send('status', { status: 'idle' }); }
 };

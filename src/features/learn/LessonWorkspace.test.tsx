@@ -23,6 +23,19 @@ describe('LessonWorkspace', () => {
     expect(glossary).toHaveTextContent('5.0');
   });
 
+  it('finishes chapter 11 with a focused completion button and no meaningless next button', () => {
+    const lesson = lessons.find((candidate) => candidate.id === 'chapter-11-7');
+    if (!lesson) throw new Error('chapter 11 final lesson not found');
+    render(<LessonContent lesson={lesson} completed={false} canComplete onComplete={vi.fn()} onPrevious={vi.fn()} onNext={vi.fn()} hasPrevious hasNext={false} />);
+
+    const finish = screen.getByRole('button', { name: '학습 마치기' });
+    expect(finish).toHaveClass('gi-pulse');
+    expect(screen.queryByRole('button', { name: '다음 학습 →' })).not.toBeInTheDocument();
+
+    render(<LessonContent lesson={lesson} completed canComplete onComplete={vi.fn()} onPrevious={vi.fn()} onNext={vi.fn()} hasPrevious hasNext={false} />);
+    expect(screen.getByRole('region', { name: '전체 학습 완료' })).toHaveTextContent('전체 학습을 마쳤어요!');
+  });
+
   it('keeps read lessons completable after the playground effect runs', async () => {
     render(<LessonWorkspace lesson={readLesson} index={1} total={69} completed={false} onCodeChange={vi.fn()} onComplete={vi.fn()} onNavigate={vi.fn()} />);
     await waitFor(() => expect(screen.getByRole('button', { name: '학습 완료' })).toBeEnabled());
