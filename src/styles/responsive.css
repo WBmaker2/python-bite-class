@@ -37,7 +37,8 @@
   .banner-copy strong { font-size: 28px; }
   .migration-notice { align-items: flex-start; flex-direction: column; margin: 12px 14px 0; }
   .lesson-heading h2 { font-size: 30px; }
-  .concept-block, .glossary-block, .resource-block { grid-template-columns: minmax(0, 64px) minmax(0, 1fr); gap: 10px; min-width: 0; }
+  .concept-block { grid-template-columns: minmax(0, 48px) minmax(0, 1fr); gap: 10px; min-width: 0; }
+  .glossary-block, .resource-block { grid-template-columns: minmax(0, 64px) minmax(0, 1fr); gap: 10px; min-width: 0; }
   .concept-block > div, .glossary-block > div, .resource-block > div, .challenge-guidance > div { min-width: 0; }
   .concept-block pre { white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; }
   .glossary-block dl > div { grid-template-columns: minmax(0, 78px) minmax(0, 1fr); gap: 7px; }
