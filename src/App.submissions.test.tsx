@@ -87,7 +87,7 @@ describe('App profile and submission boundary', () => {
 
     fireEvent.click(screen.getByRole('button', { name: '로그인' }));
     fillProfile('학교 A', '학생 A');
-    fireEvent.click(screen.getByRole('checkbox', { name: /게스트 진도와 코드/ }));
+    fireEvent.click(screen.getByRole('checkbox', { name: /게스트 진도와 작성한 코드/ }));
     fireEvent.click(screen.getByRole('button', { name: '새 학생 저장' }));
     expect(await screen.findByRole('button', { name: '학교 A · 학생 A' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '이렇게 학습해요' })).toBeInTheDocument();

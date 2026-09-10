@@ -47,7 +47,7 @@ export function StudentProfileDialog({ profile, profiles = [], guestHasProgress 
       <p className="dialog-lead">{creating ? '새 학생의 소속과 이름을 이 브라우저에 저장합니다.' : '현재 학생의 소속과 이름을 수정합니다. 같은 학교·이름이어도 새 학생으로 만들 수 있습니다.'}</p>
       <label className="field-label" htmlFor="school">소속(학교)<input id="school" value={school} maxLength={120} autoComplete="organization" onChange={(event) => setSchool(event.target.value)} /></label>
       <label className="field-label" htmlFor="student-name">이름<input id="student-name" value={name} maxLength={80} autoComplete="name" onChange={(event) => setName(event.target.value)} /></label>
-      {creating && guestHasProgress && <label className="checkbox-label"><input type="checkbox" checked={adoptGuest} onChange={(event) => setAdoptGuest(event.target.checked)} /> 이 브라우저의 게스트 진도와 코드를 새 학생에게 옮깁니다.</label>}
+      {creating && guestHasProgress && <label className="checkbox-label"><input type="checkbox" checked={adoptGuest} onChange={(event) => setAdoptGuest(event.target.checked)} /> 이 브라우저에서 먼저 학습한 게스트 진도와 작성한 코드를 새 학생 프로필로 이어받습니다.</label>}
       <p className="privacy-callout">소속과 이름은 로컬에만 저장되고, ‘과제 제출’을 누르기 전에는 학생 정보·진도·답 코드를 전송하지 않습니다. 제출한 자료는 로그아웃해도 서버에서 삭제되지 않습니다.</p>
       {error && <p className="form-error" role="alert">{error}</p>}
       <div className="dialog-actions"><button type="button" className="secondary-button" onClick={onClose}>취소</button><button type="button" className="primary-button gi-pulse" onClick={save}>{creating ? '새 학생 저장' : '현재 정보 저장'}</button></div>
