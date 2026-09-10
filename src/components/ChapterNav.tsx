@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { chapters, getChapterLessonCount, getChapterProgress, getCompletedLessonCount, getRequiredLessonCount, isLessonUnlocked, lessons } from '../content/chapters';
 import type { LessonId } from '../content/types';
 
-interface Props { currentId: LessonId; completed: Set<LessonId>; onSelect: (id: LessonId) => void; onReset: () => void; open: boolean; onClose: () => void; onUpdates: () => void; }
+interface Props { currentId: LessonId; completed: Set<LessonId>; onSelect: (id: LessonId) => void; onReset: () => void; open: boolean; onClose: () => void; onUpdates: () => void; onReport?: () => void; }
 
-export function ChapterNav({ currentId, completed, onSelect, onReset, open, onClose, onUpdates }: Props) {
+export function ChapterNav({ currentId, completed, onSelect, onReset, open, onClose, onUpdates, onReport }: Props) {
   const [isMobile, setIsMobile] = useState(false);
   const currentChapter = chapters.find((chapter) => chapter.lessons.some((lesson) => lesson.id === currentId))?.number ?? 1;
   const [expanded, setExpanded] = useState(() => new Set([currentChapter]));
@@ -21,6 +21,6 @@ export function ChapterNav({ currentId, completed, onSelect, onReset, open, onCl
         {chapter.lessons.some((lesson) => lesson.completion === 'optional') && <details className="nav-optional" open={chapter.lessons.some((lesson) => lesson.completion === 'optional' && lesson.id === currentId)}><summary>선택 참고 <span>필요할 때 열어 보세요</span></summary><div>{chapter.lessons.filter((lesson) => lesson.completion === 'optional').map((lesson) => { const index = lessons.findIndex((item) => item.id === lesson.id); const unlocked = isLessonUnlocked(index, completed); const done = completed.has(lesson.id); return <button key={lesson.id} className={`nav-item nav-lesson ${lesson.id === currentId ? 'active' : ''} ${!unlocked ? 'locked' : ''}`} aria-current={lesson.id === currentId ? 'step' : undefined} aria-disabled={!unlocked} disabled={!unlocked} onClick={() => { onSelect(lesson.id); onClose(); }}><span className={`nav-number ${done ? 'complete' : ''}`}>{done ? '✓' : '참고'}</span><span><strong>{lesson.title}</strong><small>선택 참고</small></span></button>; })}</div></details>}
       </div>}
     </section>; })}</nav>
-    <div className="progress-footer"><div className="progress-label"><span>전체 진도</span><strong>{getCompletedLessonCount(completed)}/{getRequiredLessonCount()}</strong></div><div className="progress-track"><span style={{ transform: `scaleX(${getCompletedLessonCount(completed) / getRequiredLessonCount()})` }} /></div><button className="reset-link" onClick={onReset}>진도 초기화</button><button className="text-button mobile-only nav-updates" onClick={onUpdates}>업데이트 내역</button></div>
+    <div className="progress-footer"><div className="progress-label"><span>전체 진도</span><strong>{getCompletedLessonCount(completed)}/{getRequiredLessonCount()}</strong></div><div className="progress-track"><span style={{ transform: `scaleX(${getCompletedLessonCount(completed) / getRequiredLessonCount()})` }} /></div>{onReport && <button className="report-link gi-pulse" onClick={onReport}>내 학습 리포트</button>}<button className="reset-link" onClick={onReset}>진도 초기화</button><button className="text-button mobile-only nav-updates" onClick={onUpdates}>업데이트 내역</button></div>
   </aside>;
 }

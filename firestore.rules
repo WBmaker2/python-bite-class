@@ -1,0 +1,38 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function teacher() {
+      return signedIn()
+        && request.auth.token.email == 'wbmaker01@gmail.com'
+        && request.auth.token.email_verified == true
+        && request.auth.token.firebase.sign_in_provider == 'google.com';
+    }
+    function validSubmission(data) {
+      return data.keys().hasOnly([
+          'schemaVersion', 'studentUid', 'profileId', 'school', 'name',
+          'curriculumVersion', 'submittedAt', 'requiredLessonCount',
+          'completedRequiredCount', 'progressJson'
+        ])
+        && data.schemaVersion == 1
+        && data.studentUid is string && data.studentUid.size() > 0 && data.studentUid.size() <= 128
+        && data.profileId is string && data.profileId.size() > 0 && data.profileId.size() <= 128
+        && data.school is string && data.school.size() > 0 && data.school.size() <= 120
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 80
+        && data.curriculumVersion is string && data.curriculumVersion.size() <= 32
+        && data.submittedAt is timestamp
+        && data.requiredLessonCount is number && data.requiredLessonCount % 1 == 0 && data.requiredLessonCount >= 0 && data.requiredLessonCount <= 80
+        && data.completedRequiredCount is number && data.completedRequiredCount % 1 == 0 && data.completedRequiredCount >= 0 && data.completedRequiredCount <= data.requiredLessonCount
+        && data.progressJson is string && data.progressJson.size() <= 480000;
+    }
+    match /submissions/{submissionId} {
+      allow create: if signedIn() && request.auth.token.firebase.sign_in_provider == 'anonymous'
+        && request.resource.data.studentUid == request.auth.uid
+        && validSubmission(request.resource.data)
+        && request.resource.data.submittedAt == request.time;
+      allow get: if teacher() || (signedIn() && resource.data.studentUid == request.auth.uid);
+      allow list: if teacher();
+      allow update, delete: if false;
+    }
+  }
+}

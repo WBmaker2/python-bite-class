@@ -42,12 +42,12 @@ describe('LessonWorkspace', () => {
   });
 
   it('keeps read lessons completable after the playground effect runs', async () => {
-    render(<LessonWorkspace lesson={readLesson} index={1} total={69} completed={false} onCodeChange={vi.fn()} onComplete={vi.fn()} onNavigate={vi.fn()} />);
+    render(<LessonWorkspace lesson={readLesson} index={1} total={69} completed={false} onCodeChange={vi.fn()} onExecutionEvidence={vi.fn()} onComplete={vi.fn()} onNavigate={vi.fn()} />);
     await waitFor(() => expect(screen.getByRole('button', { name: '학습 완료' })).toBeEnabled());
   });
 
   it('exposes an adjustable desktop separator with keyboard controls', () => {
-    render(<LessonWorkspace lesson={readLesson} index={1} total={69} completed={false} onCodeChange={vi.fn()} onComplete={vi.fn()} onNavigate={vi.fn()} />);
+    render(<LessonWorkspace lesson={readLesson} index={1} total={69} completed={false} onCodeChange={vi.fn()} onExecutionEvidence={vi.fn()} onComplete={vi.fn()} onNavigate={vi.fn()} />);
     const separator = screen.getByRole('separator', { name: '설명과 코드 실습 너비 조절' });
 
     expect(separator).toHaveAttribute('aria-orientation', 'vertical');
@@ -66,7 +66,7 @@ describe('LessonWorkspace', () => {
   });
 
   it('resizes with pointer capture, clamps the ratio, and cleans up drag state', () => {
-    render(<LessonWorkspace lesson={readLesson} index={1} total={69} completed={false} onCodeChange={vi.fn()} onComplete={vi.fn()} onNavigate={vi.fn()} />);
+    render(<LessonWorkspace lesson={readLesson} index={1} total={69} completed={false} onCodeChange={vi.fn()} onExecutionEvidence={vi.fn()} onComplete={vi.fn()} onNavigate={vi.fn()} />);
     const separator = screen.getByRole('separator', { name: '설명과 코드 실습 너비 조절' });
     const workspace = document.querySelector('.workspace');
     if (!(workspace instanceof HTMLElement)) throw new Error('workspace element not found');

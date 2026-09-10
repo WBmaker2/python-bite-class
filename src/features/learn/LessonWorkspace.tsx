@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent as ReactPointerEvent } from 'react';
 import type { Lesson } from '../../content/types';
+import type { ExecutionEvidence } from '../../hooks/progressMigration';
 import { getNextRequiredLessonIndex, getPreviousRequiredLessonIndex } from '../../content/chapters';
 import { LessonContent } from './LessonContent';
 import { PlaygroundPanel } from '../playground/PlaygroundPanel';
 
-interface Props { lesson: Lesson; index: number; total: number; completed: boolean; savedCode?: string; onCodeChange: (code: string) => void; onComplete: () => void; onNavigate: (index: number) => void; }
+interface Props { lesson: Lesson; index: number; total: number; completed: boolean; savedCode?: string; onCodeChange: (code: string) => void; onExecutionEvidence: (evidence: ExecutionEvidence) => void; onComplete: () => void; onNavigate: (index: number) => void; }
 
-export function LessonWorkspace({ lesson, index, completed, savedCode, onCodeChange, onComplete, onNavigate }: Props) {
+export function LessonWorkspace({ lesson, index, completed, savedCode, onCodeChange, onExecutionEvidence, onComplete, onNavigate }: Props) {
   const [mobileTab, setMobileTab] = useState<'lesson' | 'playground'>('lesson');
   const [practiceComplete, setPracticeComplete] = useState(lesson.completion === 'read' || lesson.completion === 'optional');
   const [lessonRatio, setLessonRatio] = useState(48);
@@ -81,6 +82,6 @@ export function LessonWorkspace({ lesson, index, completed, savedCode, onCodeCha
     >
       <span aria-hidden="true">↔</span>
     </div>
-    <div id="playground-pane" className={`playground-pane ${mobileTab === 'playground' ? 'mobile-visible' : ''}`}><PlaygroundPanel lesson={lesson} savedCode={savedCode} onCodeChange={onCodeChange} onPracticeComplete={setPracticeComplete} /></div>
+    <div id="playground-pane" className={`playground-pane ${mobileTab === 'playground' ? 'mobile-visible' : ''}`}><PlaygroundPanel key={lesson.id} lesson={lesson} savedCode={savedCode} onCodeChange={onCodeChange} onExecutionEvidence={onExecutionEvidence} onPracticeComplete={setPracticeComplete} /></div>
   </main>;
 }

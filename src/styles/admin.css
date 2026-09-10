@@ -1,0 +1,11 @@
+.admin-pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 5px; margin: 12px 0 16px; }
+.admin-pagination button { min-width: 34px; min-height: 32px; padding: 0 8px; border: 1px solid var(--line); border-radius: 7px; color: var(--ink-soft); background: #fffdf8; font: inherit; font-size: 11px; font-weight: 800; cursor: pointer; }
+.admin-pagination button:hover:not(:disabled), .admin-pagination button:focus-visible { border-color: var(--mint); color: var(--mint-deep); background: #eef7f3; }
+.admin-pagination button[aria-current='page'] { border-color: var(--mint); color: #fff; background: var(--mint-deep); }
+.admin-pagination button:disabled { cursor: not-allowed; opacity: .45; }
+.admin-page-arrow { min-width: 48px !important; }
+.admin-page-ellipsis { min-width: 20px; color: var(--ink-soft); text-align: center; }
+.group-latest, .history-row { text-align: left; }
+.group-latest > span, .history-row > span { display: grid; min-width: 0; gap: 4px; text-align: left; }
+.group-latest strong, .group-latest small, .history-row strong, .history-row small { overflow-wrap: anywhere; }
+@media (max-width: 767px) { .admin-toolbar { flex-wrap: wrap; }.admin-toolbar input { min-width: min(100%, 220px); }.admin-page-arrow { min-width: 44px !important; } }
