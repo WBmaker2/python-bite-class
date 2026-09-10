@@ -8,4 +8,9 @@
 .group-latest, .history-row { text-align: left; }
 .group-latest > span, .history-row > span { display: grid; min-width: 0; gap: 4px; text-align: left; }
 .group-latest strong, .group-latest small, .history-row strong, .history-row small { overflow-wrap: anywhere; }
+.submission-row-line { display: flex; align-items: stretch; gap: 8px; }
+.submission-row-line > .submission-row { flex: 1; min-width: 0; }
+.submission-delete { align-self: center; flex: 0 0 auto; padding: 7px 4px; font-size: 11px; white-space: nowrap; }
+.invalid-row > div { display: grid; min-width: 0; gap: 3px; }
+.invalid-row > div > * { overflow-wrap: anywhere; }
 @media (max-width: 767px) { .admin-toolbar { flex-wrap: wrap; }.admin-toolbar input { min-width: min(100%, 220px); }.admin-page-arrow { min-width: 44px !important; } }

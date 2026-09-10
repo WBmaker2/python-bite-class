@@ -32,7 +32,12 @@ service cloud.firestore {
         && request.resource.data.submittedAt == request.time;
       allow get: if teacher() || (signedIn() && resource.data.studentUid == request.auth.uid);
       allow list: if teacher();
-      allow update, delete: if false;
+      allow update: if signedIn() && request.auth.token.firebase.sign_in_provider == 'anonymous'
+        && resource.data.studentUid == request.auth.uid
+        && request.resource.data.studentUid == request.auth.uid
+        && validSubmission(request.resource.data)
+        && request.resource.data.submittedAt == request.time;
+      allow delete: if teacher();
     }
   }
 }

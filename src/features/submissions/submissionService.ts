@@ -1,5 +1,5 @@
 import { buildSubmissionPayload, parseSubmissionRecord, type SubmissionPayload, type SubmissionRecord, type InvalidSubmissionRecord } from './types';
-import { commitSubmission, ensureStudentUser, getSubmission, isTeacherUser, listSubmissions, signInTeacher, teacherAuth } from '../../firebase/client';
+import { commitSubmission, deleteSubmission as deleteSubmissionDocument, ensureStudentUser, getSubmission, isTeacherUser, listSubmissions, signInTeacher, teacherAuth } from '../../firebase/client';
 import { PENDING_SUBMISSION_STORAGE_PREFIX, type StudentProfile } from '../../hooks/useLearningProgress';
 import type { StoredProgress } from '../../hooks/progressMigration';
 import { lessons } from '../../content/chapters';
@@ -36,6 +36,11 @@ export async function submitStudentProgress(profile: StudentProfile, progress: S
   return { id, duplicate: true, receiptAt: typeof existing.submittedAt === 'string' ? existing.submittedAt : undefined };
 }
 export async function authenticateTeacher() { const user = await signInTeacher(); if (!isTeacherUser(user)) throw new Error('교사 권한을 확인하지 못했어요.'); return user; }
+export async function deleteTeacherSubmission(id: string) {
+  const user = teacherAuth().currentUser;
+  if (!isTeacherUser(user)) throw new Error('교사 Google 계정으로 먼저 로그인해 주세요.');
+  return deleteSubmissionDocument(id, user!);
+}
 export async function loadTeacherSubmissions(): Promise<Array<SubmissionRecord | InvalidSubmissionRecord>> {
   const user = teacherAuth().currentUser;
   if (!isTeacherUser(user)) throw new Error('교사 Google 계정으로 먼저 로그인해 주세요.');

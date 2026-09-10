@@ -84,13 +84,13 @@ function progressJsonOfLength(length) {
   return JSON.stringify([lessonRow({ submittedCode: 'x'.repeat(length - emptyLength) })]);
 }
 
-function restFields(uid) {
+function restFields(uid, name = '김REST학생') {
   return {
     schemaVersion: { integerValue: '1' },
     studentUid: { stringValue: uid },
     profileId: { stringValue: 'profile-rest' },
     school: { stringValue: 'QA REST 테스트학교' },
-    name: { stringValue: '김REST학생' },
+    name: { stringValue: name },
     curriculumVersion: { stringValue: '2026-09' },
     requiredLessonCount: { integerValue: '1' },
     completedRequiredCount: { integerValue: '1' },
@@ -98,15 +98,14 @@ function restFields(uid) {
   };
 }
 
-async function restCommit(id, uid, token) {
+async function restCommit(id, uid, token, name) {
   return fetch(`http://127.0.0.1:8080/v1/projects/${PROJECT_ID}/databases/(default)/documents:commit`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       writes: [{
-        update: { name: `projects/${PROJECT_ID}/databases/(default)/documents/submissions/${id}`, fields: restFields(uid) },
+        update: { name: `projects/${PROJECT_ID}/databases/(default)/documents/submissions/${id}`, fields: restFields(uid, name) },
         updateTransforms: [{ fieldPath: 'submittedAt', setToServerValue: 'REQUEST_TIME' }],
-        currentDocument: { exists: false },
       }],
     }),
   });
@@ -163,20 +162,21 @@ test('학생은 다른 학생 자료를 읽거나 목록으로 열람할 수 없
   await assertFails(getDocs(collection(student('student-a'), 'submissions')));
 });
 
-test('학생은 제출을 수정하거나 삭제할 수 없다', async () => {
+test('학생은 자신의 제출을 최신 자료로 수정할 수 있지만 삭제할 수 없다', async () => {
   await createStudent();
   const db = student('student-a');
-  await assertFails(updateDoc(namedDoc(db), { name: '바뀐이름' }));
+  await assertSucceeds(updateDoc(namedDoc(db), { name: '바뀐이름', submittedAt: serverTimestamp() }));
+  await assertFails(updateDoc(namedDoc(db), { studentUid: 'student-b', submittedAt: serverTimestamp() }));
   await assertFails(deleteDoc(namedDoc(db)));
 });
 
-test('검증된 wbmaker01 Google 교사는 제출을 읽고 목록을 볼 수 있다', async () => {
+test('검증된 wbmaker01 Google 교사는 제출을 읽고 목록을 보고 삭제할 수 있다', async () => {
   await createStudent();
   await assertSucceeds(getDoc(namedDoc(teacher())));
   const result = await assertSucceeds(getDocs(collection(teacher(), 'submissions')));
   assert.equal(result.size, 1);
   await assertFails(updateDoc(namedDoc(teacher()), { name: '교사 수정' }));
-  await assertFails(deleteDoc(namedDoc(teacher())));
+  await assertSucceeds(deleteDoc(namedDoc(teacher())));
 });
 
 test('교사 이메일·인증·제공자 조건을 위조한 토큰은 열람할 수 없다', async () => {
@@ -258,7 +258,7 @@ test('학생 UID를 다른 값으로 제출할 수 없다', async () => {
   await assertFails(setDoc(namedDoc(student('student-a')), submission('student-b')));
 });
 
-test('REST commit은 REQUEST_TIME을 기록하고 exists:false 재시도를 중복으로 거부한다', async () => {
+test('REST commit은 같은 제출 ID를 최신 자료로 덮어쓰고 REQUEST_TIME을 갱신한다', async () => {
   const uid = 'student-rest';
   const id = 'submission-rest-retry';
   const token = createMockUserToken({
@@ -283,6 +283,13 @@ test('REST commit은 REQUEST_TIME을 기록하고 exists:false 재시도를 중�
   );
   assert.equal(record.fields.studentUid.stringValue, uid);
 
-  const retry = await restCommit(id, uid, token);
-  assert.equal(retry.status, 409);
+  const retry = await restCommit(id, uid, token, '김REST최신학생');
+  assert.equal(retry.status, 200);
+  const updated = await fetch(`http://127.0.0.1:8080/v1/projects/${PROJECT_ID}/databases/(default)/documents/submissions/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  assert.equal(updated.status, 200);
+  const updatedRecord = await updated.json();
+  assert.equal(updatedRecord.fields.name.stringValue, '김REST최신학생');
+  assert.ok(Date.parse(updatedRecord.fields.submittedAt.timestampValue) >= Date.parse(record.fields.submittedAt.timestampValue));
 });

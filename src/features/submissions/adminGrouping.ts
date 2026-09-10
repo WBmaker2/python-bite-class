@@ -5,7 +5,7 @@ export interface StudentGroup { key: string; latest: SubmissionRecord; history: 
 export const ADMIN_PAGE_SIZE = 10;
 
 function isSubmission(row: SubmissionRow): row is SubmissionRecord { return !('invalid' in row); }
-function submittedTime(row: SubmissionRecord): number {
+function submittedTime(row: Pick<SubmissionRecord, 'submittedAt'>): number {
   if (!row.submittedAt) return 0;
   const value = new Date(row.submittedAt).getTime();
   return Number.isNaN(value) ? 0 : value;
@@ -13,11 +13,29 @@ function submittedTime(row: SubmissionRecord): number {
 function groupKey(row: SubmissionRecord): string { return `${row.studentUid}\u0000${row.profileId}`; }
 function matchesQuery(row: SubmissionRecord, query: string): boolean { return `${row.school} ${row.name} ${row.id} ${row.studentUid} ${row.profileId}`.toLocaleLowerCase().includes(query); }
 
+/** Keep one row per submission ID when a legacy/API response contains duplicates. */
+export function dedupeSubmissionRows(rows: SubmissionRow[]): SubmissionRow[] {
+  const byId = new Map<string, SubmissionRow>();
+  rows.forEach((row) => {
+    const current = byId.get(row.id);
+    if (!current) {
+      byId.set(row.id, row);
+      return;
+    }
+    if (isSubmission(row) && !isSubmission(current)) {
+      byId.set(row.id, row);
+      return;
+    }
+    if (isSubmission(row) === isSubmission(current) && submittedTime(row) >= submittedTime(current)) byId.set(row.id, row);
+  });
+  return [...byId.values()];
+}
+
 /** Group history before filtering so matches retain their older submissions. */
 export function groupStudentSubmissions(rows: SubmissionRow[], query = ''): StudentGroup[] {
   const normalized = query.trim().toLocaleLowerCase();
   const groups = new Map<string, SubmissionRecord[]>();
-  rows.filter(isSubmission).forEach((row) => { const key = groupKey(row); groups.set(key, [...(groups.get(key) ?? []), row]); });
+  dedupeSubmissionRows(rows).filter(isSubmission).forEach((row) => { const key = groupKey(row); groups.set(key, [...(groups.get(key) ?? []), row]); });
   return [...groups.entries()]
     .filter(([, groupRows]) => !normalized || groupRows.some((row) => matchesQuery(row, normalized)))
     .map(([key, groupRows]) => {

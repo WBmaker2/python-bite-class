@@ -93,7 +93,7 @@ describe('App profile and submission boundary', () => {
     expect(screen.getByRole('heading', { name: '이렇게 학습해요' })).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: '학교 A · 학생 A' }));
-    fireEvent.click(screen.getByRole('button', { name: '새 학생 추가' }));
+    fireEvent.click(screen.getByRole('button', { name: '다른 학생 추가' }));
     fillProfile('학교 B', '학생 B');
     fireEvent.click(screen.getByRole('button', { name: '새 학생 저장' }));
     expect(await screen.findByRole('button', { name: '학교 B · 학생 B' })).toBeInTheDocument();

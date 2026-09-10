@@ -26,4 +26,10 @@ describe('StudentProfileDialog', () => {
     fireEvent.keyDown(window, { key: 'Escape' });
     expect(onClose).toHaveBeenCalled();
   });
+
+  it('labels the profile action as adding another student', () => {
+    render(<StudentProfileDialog profile={current} profiles={[current]} onSave={vi.fn()} onCreate={vi.fn()} onClose={vi.fn()} />);
+    expect(screen.getByRole('button', { name: '다른 학생 추가' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: '새 학생 추가' })).not.toBeInTheDocument();
+  });
 });

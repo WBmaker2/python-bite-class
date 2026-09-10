@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { authenticateTeacher, loadTeacherSubmissions } from './submissionService';
+import { authenticateTeacher, deleteTeacherSubmission, loadTeacherSubmissions } from './submissionService';
 import { teacherAuth } from '../../firebase/client';
 import type { SubmissionRecord } from './types';
 import { TeacherAdminPanel } from './TeacherAdminPanel';
@@ -9,6 +9,7 @@ import { getAdminPageItems } from './adminPaginationItems';
 
 vi.mock('./submissionService', () => ({
   authenticateTeacher: vi.fn(),
+  deleteTeacherSubmission: vi.fn(),
   loadTeacherSubmissions: vi.fn(),
 }));
 vi.mock('../../firebase/client', () => ({ teacherAuth: vi.fn() }));
@@ -38,12 +39,14 @@ function row(id: string, studentUid: string, profileId: string, submittedAt: str
 }
 
 const authMock = vi.mocked(authenticateTeacher);
+const deleteMock = vi.mocked(deleteTeacherSubmission);
 const loadMock = vi.mocked(loadTeacherSubmissions);
 const teacherAuthMock = vi.mocked(teacherAuth);
 
 beforeEach(() => {
   vi.clearAllMocks();
   authMock.mockResolvedValue({} as never);
+  deleteMock.mockResolvedValue({ deleted: true });
   loadMock.mockResolvedValue([
     row('student-a-old', 'student-a', 'profile-a', '2026-09-09T01:00:00.000Z', 'old-code'),
     row('student-a-new', 'student-a', 'profile-a', '2026-09-10T01:00:00.000Z', 'new-code'),
@@ -84,6 +87,15 @@ describe('TeacherAdminPanel', () => {
     const groups = groupStudentSubmissions([older, newer, namesake]);
     expect(groups.map((group) => group.latest.id)).toEqual(['namesake', 'newer']);
     expect(groups[1].history.map((submission) => submission.id)).toEqual(['older']);
+  });
+
+  it('keeps only the newest row when a submission ID is repeated', () => {
+    const older = row('same-id', 'same-uid', 'profile-a', '2026-09-09T01:00:00.000Z', 'old');
+    const newer = row('same-id', 'same-uid', 'profile-a', '2026-09-10T01:00:00.000Z', 'new');
+    const groups = groupStudentSubmissions([newer, older]);
+    expect(groups).toHaveLength(1);
+    expect(groups[0].latest.progress[0].submittedCode).toBe('new');
+    expect(groups[0].history).toHaveLength(0);
   });
 
   it('groups by student UID and profile, keeping same-name students distinct', async () => {
@@ -168,5 +180,20 @@ describe('TeacherAdminPanel', () => {
     loadMock.mockResolvedValueOnce([]);
     fireEvent.click(screen.getByRole('button', { name: '새로 고침' }));
     await waitFor(() => expect(screen.getByText(/전체 학생 0명 · 최근 제출순 · 현재 페이지 1\/1/)).toBeInTheDocument());
+  });
+
+  it('asks for confirmation before deleting one submission and removes it after approval', async () => {
+    await openPanel();
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    const deleteButtons = screen.getAllByRole('button', { name: '같은학교 · 같은이름 제출 삭제' });
+    fireEvent.click(deleteButtons[0]);
+    expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining('이 제출 자료를 삭제할까요?'));
+    expect(deleteMock).not.toHaveBeenCalled();
+
+    confirmSpy.mockReturnValue(true);
+    fireEvent.click(deleteButtons[0]);
+    await waitFor(() => expect(deleteMock).toHaveBeenCalledWith('student-b-new'));
+    expect(screen.getByText('제출 자료를 삭제했습니다.')).toBeInTheDocument();
+    confirmSpy.mockRestore();
   });
 });

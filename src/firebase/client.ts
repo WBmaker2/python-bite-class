@@ -40,10 +40,11 @@ function fromFirestoreValue(value: Record<string, any>): any {
 }
 export async function commitSubmission(id: string, payload: Record<string, unknown>, user: User) {
   requireConfig();
+  // Reusing a submission ID intentionally replaces that snapshot with the latest one.
   const token = await user.getIdToken();
   const endpoint = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents:commit`;
   const fieldsPayload: Record<string, unknown> = { ...payload, progressJson: JSON.stringify(payload.progress) }; delete fieldsPayload.submittedAt; delete fieldsPayload.progress;
-  const response = await fetchWithTimeout(endpoint, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ writes: [{ update: { name: `projects/${firebaseConfig.projectId}/databases/(default)/documents/submissions/${id}`, fields: firestoreFields(fieldsPayload) }, updateTransforms: [{ fieldPath: 'submittedAt', setToServerValue: 'REQUEST_TIME' }], currentDocument: { exists: false } }] }) });
+  const response = await fetchWithTimeout(endpoint, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ writes: [{ update: { name: `projects/${firebaseConfig.projectId}/databases/(default)/documents/submissions/${id}`, fields: firestoreFields(fieldsPayload) }, updateTransforms: [{ fieldPath: 'submittedAt', setToServerValue: 'REQUEST_TIME' }] }] }) });
   if (response.ok) { const body = await response.json().catch(() => ({})) as { commitTime?: string }; return { accepted: true, receiptAt: body.commitTime }; }
   if (response.status === 409) return { accepted: false, duplicate: true };
   const detail = await response.text();
@@ -55,15 +56,24 @@ export async function getSubmission(id: string, user: User) {
   const response = await fetchWithTimeout(`https://firestore.googleapis.com/v1/${path}`, { headers: { Authorization: `Bearer ${token}` } });
   if (response.status === 404) return undefined;
   if (!response.ok) throw new Error('제출 접수 상태를 확인하지 못했어요.');
-  const raw = await response.json() as { name: string; fields?: Record<string, Record<string, unknown>>; createTime?: string };
+  const raw = await response.json() as { name: string; fields?: Record<string, Record<string, unknown>>; createTime?: string; updateTime?: string };
   const fields = Object.fromEntries(Object.entries(raw.fields ?? {}).map(([key, value]) => [key, fromFirestoreValue(value)]));
   if (typeof fields.progressJson === 'string') { try { fields.progress = JSON.parse(fields.progressJson); } catch { fields.progress = undefined; } delete fields.progressJson; }
-  return { id, ...fields, submittedAt: raw.createTime };
+  return { id, ...fields, submittedAt: typeof fields.submittedAt === 'string' ? fields.submittedAt : raw.updateTime ?? raw.createTime };
+}
+export async function deleteSubmission(id: string, user: User) {
+  requireConfig();
+  const token = await user.getIdToken();
+  const path = `projects/${firebaseConfig.projectId}/databases/(default)/documents/submissions/${encodeURIComponent(id)}`;
+  const response = await fetchWithTimeout(`https://firestore.googleapis.com/v1/${path}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+  if (response.ok || response.status === 404) return { deleted: response.ok };
+  const detail = await response.text();
+  throw new Error(`제출 자료를 삭제하지 못했어요 (${response.status}). ${detail.slice(0, 180)}`);
 }
 export async function listSubmissions(user: User) {
   const token = await user.getIdToken();
   const response = await fetchWithTimeout(`https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents:runQuery`, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ structuredQuery: { from: [{ collectionId: 'submissions' }], orderBy: [{ field: { fieldPath: 'submittedAt' }, direction: 'DESCENDING' }] } }) });
   if (!response.ok) throw new Error('제출 목록을 불러오지 못했어요.');
-  const rows = await response.json() as Array<{ document?: { name: string; fields?: Record<string, Record<string, unknown>>; createTime?: string } }>;
-  return rows.filter((row) => row.document).map((row) => { const doc = row.document!; const id = doc.name.split('/').pop() ?? ''; const fields = Object.fromEntries(Object.entries(doc.fields ?? {}).map(([key, value]) => [key, fromFirestoreValue(value)])); if (typeof fields.progressJson === 'string') { try { fields.progress = JSON.parse(fields.progressJson); } catch { fields.progress = undefined; } delete fields.progressJson; } return { id, ...fields, submittedAt: doc.createTime }; });
+  const rows = await response.json() as Array<{ document?: { name: string; fields?: Record<string, Record<string, unknown>>; createTime?: string; updateTime?: string } }>;
+  return rows.filter((row) => row.document).map((row) => { const doc = row.document!; const id = doc.name.split('/').pop() ?? ''; const fields = Object.fromEntries(Object.entries(doc.fields ?? {}).map(([key, value]) => [key, fromFirestoreValue(value)])); if (typeof fields.progressJson === 'string') { try { fields.progress = JSON.parse(fields.progressJson); } catch { fields.progress = undefined; } delete fields.progressJson; } return { id, ...fields, submittedAt: typeof fields.submittedAt === 'string' ? fields.submittedAt : doc.updateTime ?? doc.createTime }; });
 }
