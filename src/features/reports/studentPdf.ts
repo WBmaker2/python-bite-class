@@ -1,6 +1,6 @@
 import { PDFDocument, rgb, type PDFPage } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
-import { chapterReportSummaries, completionLabel, formatReportTimestamp, progressRate, runStatusLabel, statusLabel } from './format';
+import { chapterReportSummaries, completionLabel, formatReportTimestamp, progressRate, runStatusLabel, shouldIncludeReportCode, statusLabel } from './format';
 import { MARGIN, PAGE_WIDTH, PdfWriter, resolveFontBytes, type PdfReportOptions } from './pdf';
 import { buildLocalReportFilename, type LocalStudentReportSnapshot } from './student';
 import type { ReportFile, ReportLessonSnapshot } from './types';
@@ -10,7 +10,7 @@ function scopeLabel(snapshot: LocalStudentReportSnapshot): string {
 }
 
 function drawLesson(writer: PdfWriter, item: ReportLessonSnapshot, index: number): void {
-  if (item.submittedCode === undefined) {
+  if (!shouldIncludeReportCode(item) || item.submittedCode === undefined) {
     writer.text(`${index + 1}. ${item.title} · ${statusLabel(item.status)} · ${item.completed === true ? '완료' : '미완료'} · 최근 실행 ${runStatusLabel(item.lastRunStatus)}${item.lastRunPassed === true ? '·통과' : item.lastRunPassed === false ? '·실패' : ''}`);
     return;
   }

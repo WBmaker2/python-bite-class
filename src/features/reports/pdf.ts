@@ -1,6 +1,6 @@
 import { PDFDocument, rgb, type PDFFont, type PDFPage } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
-import { buildReportFilename, chapterReportSummaries, completionLabel, formatReportTimestamp, progressRate, reportId, reportString, runStatusLabel, statusLabel } from './format';
+import { buildReportFilename, chapterReportSummaries, completionLabel, formatReportTimestamp, progressRate, reportId, reportString, runStatusLabel, shouldIncludeReportCode, statusLabel } from './format';
 import type { ReportFile, ReportLessonSnapshot, SubmissionReportSnapshot } from './types';
 
 const KOREAN_FONT_COMMIT = '16680f8688ffcd467d2eb2146a9ce0343404581d';
@@ -104,9 +104,9 @@ function drawLesson(writer: PdfWriter, item: ReportLessonSnapshot, index: number
   writer.text(`단계 ID: ${item.lessonId} · 종류: ${completionLabel(item.completion)} · 제출 당시 상태: ${statusLabel(item.status)} · 완료 여부: ${item.completed === true ? '완료' : '미완료'}`);
   writer.text(`마지막 실행: ${runStatusLabel(item.lastRunStatus)} (${item.lastRunPassed === true ? '통과' : item.lastRunPassed === false ? '실패' : '판정 없음'}) / ${formatReportTimestamp(item.lastRunAt)} · 마지막 성공: ${formatReportTimestamp(item.lastSuccessAt)}`);
   if (item.outputSummary) writer.text(`출력 요약: ${item.outputSummary}`);
-  if (item.submittedCode) { writer.text('제출 코드', 9.5, { r: 0.05, g: 0.28, b: 0.3 }, 2); writer.code(item.submittedCode); }
-  if (item.lastExecutedCode && item.lastExecutedCode !== item.submittedCode) { writer.text('마지막 실행 코드', 9.5, { r: 0.05, g: 0.28, b: 0.3 }, 2); writer.code(item.lastExecutedCode); }
-  if (item.lastSuccessCode && item.lastSuccessCode !== item.submittedCode && item.lastSuccessCode !== item.lastExecutedCode) { writer.text('마지막 성공 코드', 9.5, { r: 0.05, g: 0.28, b: 0.3 }, 2); writer.code(item.lastSuccessCode); }
+  if (shouldIncludeReportCode(item) && item.submittedCode) { writer.text('제출 코드', 9.5, { r: 0.05, g: 0.28, b: 0.3 }, 2); writer.code(item.submittedCode); }
+  if (shouldIncludeReportCode(item) && item.lastExecutedCode && item.lastExecutedCode !== item.submittedCode) { writer.text('마지막 실행 코드', 9.5, { r: 0.05, g: 0.28, b: 0.3 }, 2); writer.code(item.lastExecutedCode); }
+  if (shouldIncludeReportCode(item) && item.lastSuccessCode && item.lastSuccessCode !== item.submittedCode && item.lastSuccessCode !== item.lastExecutedCode) { writer.text('마지막 성공 코드', 9.5, { r: 0.05, g: 0.28, b: 0.3 }, 2); writer.code(item.lastSuccessCode); }
 }
 
 export async function buildStudentPdf(snapshot: SubmissionReportSnapshot, options: PdfReportOptions = {}): Promise<ReportFile> {

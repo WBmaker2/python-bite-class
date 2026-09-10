@@ -3,7 +3,7 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import * as XLSX from 'xlsx';
 import { buildStudentWorkbook } from './xlsx';
 import { buildStudentPdf } from './pdf';
-import { buildReportFilename, chapterReportSummaries, formatReportTimestamp } from './format';
+import { buildReportFilename, chapterReportSummaries, formatReportTimestamp, shouldIncludeReportCode } from './format';
 import type { SubmissionReportSnapshot } from './types';
 
 const fixture: SubmissionReportSnapshot = {
@@ -24,6 +24,12 @@ const longFixture: SubmissionReportSnapshot = {
 };
 
 describe('report formatting', () => {
+  it('includes report code only for completed lessons', () => {
+    expect(shouldIncludeReportCode({ completed: true })).toBe(true);
+    expect(shouldIncludeReportCode({ completed: false })).toBe(false);
+    expect(shouldIncludeReportCode({ completed: undefined })).toBe(false);
+  });
+
   it('formats server timestamps in Seoul time and creates a safe filename', () => {
     expect(formatReportTimestamp(fixture.submittedAt)).toContain('2026. 9. 10.');
     expect(buildReportFilename(fixture, 'xlsx')).toBe('서울- 테스트학교-김학생-submission-qa-01.xlsx');

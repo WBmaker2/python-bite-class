@@ -1,4 +1,4 @@
-import type { ReportTimestamp, SubmissionReportSnapshot } from './types';
+import type { ReportLessonSnapshot, ReportTimestamp, SubmissionReportSnapshot } from './types';
 
 export function formatReportTimestamp(value: ReportTimestamp | undefined): string {
   if (value === undefined || value === null || value === '') return '기록 없음';
@@ -43,6 +43,10 @@ export function runStatusLabel(value: string | undefined): string {
 export function reportString(value: unknown): string {
   if (value === undefined || value === null) return '';
   return String(value);
+}
+
+export function shouldIncludeReportCode(item: Pick<ReportLessonSnapshot, 'completed'>): boolean {
+  return item.completed === true;
 }
 
 export function progressRate(snapshot: Pick<SubmissionReportSnapshot, 'requiredLessonCount' | 'completedRequiredCount'>): string {

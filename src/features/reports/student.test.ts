@@ -5,7 +5,7 @@ import type { StoredProgress } from '../../hooks/progressMigration';
 
 const profile: StudentProfile = { id: 'local-1', school: '우리 학교', name: '학생', createdAt: '2026-09-10T00:00:00.000Z', currentLessonId: 'chapter-1-1', progress: { completed: [], codeByLesson: {}, executionByLesson: {} } };
 const progress: StoredProgress = {
-  completed: ['chapter-1-1'], codeByLesson: { 'chapter-1-4': '=print("원본")' },
+  completed: ['chapter-1-1'], codeByLesson: { 'chapter-1-1': '=print("완료한 단계")', 'chapter-1-4': '=print("미완료 단계")' },
   executionByLesson: { 'chapter-1-4': { lastExecutedCode: '=print("원본")', lastRunStatus: 'error', lastRunPassed: false, lastRunAt: '2026-09-10T00:00:00.000Z', outputSummary: '오류' } },
 };
 
@@ -18,7 +18,8 @@ describe('local student report snapshot', () => {
     expect(row?.submittedCode).toBeUndefined();
     expect(summary.nextStepLabel).toContain('다시 실행');
     const withCode = buildLocalStudentReportSnapshot(profile, progress, { scope: 'chapter', chapter: 1, includeCode: true, generatedAt: '2026-09-10T00:00:00.000Z' });
-    expect(withCode.progress.find((item) => item.lessonId === 'chapter-1-4')?.submittedCode).toBe('=print("원본")');
+    expect(withCode.progress.find((item) => item.lessonId === 'chapter-1-1')?.submittedCode).toBe('=print("완료한 단계")');
+    expect(withCode.progress.find((item) => item.lessonId === 'chapter-1-4')?.submittedCode).toBeUndefined();
   });
 
   it('recognizes completed, written, and failed execution records as learning records', () => {

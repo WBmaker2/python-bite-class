@@ -5,7 +5,7 @@ import { buildLocalStudentReportSnapshot } from './student';
 import { buildLocalStudentPdf } from './studentPdf';
 
 const fontPath = 'public/fonts/NanumGothic-Regular.ttf';
-const profile: StudentProfile = { id: 'qa-student', school: '서울 한빛 중학교', name: '김하늘', createdAt: '2026-09-10', currentLessonId: 'chapter-1-4', progress: { completed: ['chapter-1-1'], codeByLesson: { 'chapter-1-4': 'print("안녕하세요, 김하늘")\n' + 'print("학습 기록을 확인해요")\n'.repeat(20) }, executionByLesson: { 'chapter-1-4': { lastExecutedCode: 'print("이전 실행")', lastRunStatus: 'error', lastRunPassed: false, lastRunAt: '2026-09-10T00:00:00.000Z', outputSummary: '오류가 있었지만 다시 시도할 수 있어요.' } } } };
+const profile: StudentProfile = { id: 'qa-student', school: '서울 한빛 중학교', name: '김하늘', createdAt: '2026-09-10', currentLessonId: 'chapter-1-4', progress: { completed: ['chapter-1-1'], codeByLesson: { 'chapter-1-1': 'print("완료한 단계")\n' + 'print("학습 기록을 확인해요")\n'.repeat(20), 'chapter-1-4': 'print("미완료 단계 예제")' }, executionByLesson: { 'chapter-1-4': { lastExecutedCode: 'print("미완료 단계 이전 실행")', lastRunStatus: 'error', lastRunPassed: false, lastRunAt: '2026-09-10T00:00:00.000Z', outputSummary: '오류가 있었지만 다시 시도할 수 있어요.' } } } };
 
 describe('student PDF artifact QA', () => {
   it.skipIf(process.env.REPORT_QA !== '1')('creates a Korean local report with and without the code appendix', async () => {

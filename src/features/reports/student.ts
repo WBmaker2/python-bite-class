@@ -3,7 +3,7 @@ import type { LessonId } from '../../content/types';
 import type { StudentProfile } from '../../hooks/useLearningProgress';
 import type { StoredProgress } from '../../hooks/progressMigration';
 import { statusForLesson } from '../submissions/types';
-import { reportDate, sanitizeFilenameSegment } from './format';
+import { reportDate, sanitizeFilenameSegment, shouldIncludeReportCode } from './format';
 import type { ReportLessonSnapshot, ReportTimestamp } from './types';
 
 export type StudentReportScope = 'all' | 'chapter';
@@ -51,14 +51,15 @@ function rowForLesson(lesson: typeof lessons[number], progress: StoredProgress, 
     status: statusForLesson(completed, lesson.completion, currentCode, evidence),
     completed,
   };
+  const includeLessonCode = includeCode && shouldIncludeReportCode(row);
   return {
     ...row,
-    ...(includeCode ? { submittedCode: currentCode, lastExecutedCode: evidence?.lastExecutedCode ?? '', lastSuccessCode: evidence?.lastSuccessCode ?? '' } : {}),
+    ...(includeLessonCode ? { submittedCode: currentCode, lastExecutedCode: evidence?.lastExecutedCode ?? '', lastSuccessCode: evidence?.lastSuccessCode ?? '' } : {}),
     lastRunStatus: evidence?.lastRunStatus ?? '',
     lastRunPassed: typeof evidence?.lastRunPassed === 'boolean' ? evidence.lastRunPassed : null,
     lastRunAt: evidence?.lastRunAt ?? '',
     lastSuccessAt: evidence?.lastSuccessAt ?? '',
-    ...(includeCode ? { outputSummary: evidence?.outputSummary ?? '' } : {}),
+    ...(includeLessonCode ? { outputSummary: evidence?.outputSummary ?? '' } : {}),
   };
 }
 
