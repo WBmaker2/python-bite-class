@@ -3,14 +3,14 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import * as XLSX from 'xlsx';
 import { buildStudentWorkbook } from './xlsx';
 import { buildStudentPdf } from './pdf';
-import { buildReportFilename, chapterReportSummaries, formatReportTimestamp, shouldIncludeReportCode } from './format';
+import { buildReportFilename, chapterReportSummaries, formatReportTimestamp, reportCodeVariants, shouldIncludeReportCode } from './format';
 import type { SubmissionReportSnapshot } from './types';
 
 const fixture: SubmissionReportSnapshot = {
   submissionId: 'submission/qa:01', schemaVersion: 1, profileId: 'profile-1', school: '서울: 테스트학교', name: '김학생',
   curriculumVersion: '2026-09', submittedAt: '2026-09-10T03:00:00.000Z', requiredLessonCount: 2, completedRequiredCount: 1,
   progress: [
-    { lessonId: 'chapter-1-1', title: '변수와 출력', completion: 'run', status: 'success', completed: true, submittedCode: '=1+1\nprint("안녕")', lastExecutedCode: '=1+1\nprint("안녕")', lastRunStatus: 'done', lastRunPassed: true, outputSummary: '안녕' },
+    { lessonId: 'chapter-1-1', title: '변수와 출력', completion: 'run', status: 'success', completed: true, submittedCode: '=1+1\nprint("안녕")', lastExecutedCode: '=1+1\nprint("안녕")', lastSuccessCode: '=1+1\nprint("안녕")', lastRunStatus: 'done', lastRunPassed: true, outputSummary: '안녕' },
     { lessonId: 'chapter-1-2', title: '긴 코드 단계', completion: 'run', status: 'modified_unexecuted', completed: false, submittedCode: 'print("긴 코드")\n'.repeat(40), lastExecutedCode: 'print("이전")', lastRunStatus: 'done', lastRunPassed: true },
     { lessonId: 'chapter-2-1', title: '참고 읽기', completion: 'optional', status: 'optional', completed: false, submittedCode: 'print("참고")' },
   ],
@@ -19,7 +19,7 @@ const longCode = ('print("학생😀")\n'.repeat(1000)).slice(0, 11990);
 const longFixture: SubmissionReportSnapshot = {
   ...fixture,
   school: '아주 긴 학교 이름 '.repeat(8), name: '이름이 긴 학생 '.repeat(6),
-  progress: [{ ...fixture.progress[0], title: '아주 긴 단계 제목 '.repeat(8), submittedCode: longCode }],
+  progress: [{ ...fixture.progress[0], title: '아주 긴 단계 제목 '.repeat(8), submittedCode: longCode, lastExecutedCode: longCode, lastSuccessCode: '' }],
   requiredLessonCount: 1, completedRequiredCount: 1,
 };
 
@@ -28,6 +28,16 @@ describe('report formatting', () => {
     expect(shouldIncludeReportCode({ completed: true })).toBe(true);
     expect(shouldIncludeReportCode({ completed: false })).toBe(false);
     expect(shouldIncludeReportCode({ completed: undefined })).toBe(false);
+  });
+
+  it('selects successful code first and omits duplicate, missing, and incomplete variants', () => {
+    expect(reportCodeVariants({ completed: true, lastSuccessCode: 'success', lastExecutedCode: 'success' })).toEqual([{ label: '마지막 성공 코드', code: 'success' }]);
+    expect(reportCodeVariants({ completed: true, lastSuccessCode: 'success', lastExecutedCode: 'latest' })).toEqual([
+      { label: '마지막 성공 코드', code: 'success' }, { label: '마지막 실행 코드', code: 'latest' },
+    ]);
+    expect(reportCodeVariants({ completed: true, lastSuccessCode: '', lastExecutedCode: 'latest' })).toEqual([{ label: '마지막 실행 코드', code: 'latest' }]);
+    expect(reportCodeVariants({ completed: true, lastSuccessCode: 'success', lastExecutedCode: '' })).toEqual([{ label: '마지막 성공 코드', code: 'success' }]);
+    expect(reportCodeVariants({ completed: false, lastSuccessCode: 'success', lastExecutedCode: 'latest' })).toEqual([]);
   });
 
   it('formats server timestamps in Seoul time and creates a safe filename', () => {
@@ -52,7 +62,9 @@ describe('xlsx report', () => {
     expect(cell.t).toBe('s');
     expect(cell.f).toBeUndefined();
     expect(cell.v).toContain('=1+1');
-    expect(codeSheet.D3.v).toContain('긴 코드');
+    expect(codeSheet.E2.v).toBe('');
+    expect(codeSheet.D3.v).toBe('');
+    expect(XLSX.utils.sheet_to_json(workbook.Sheets['단계별 진도'], { header: 1 })[0]).not.toContain('제출 코드');
     expect(workbook.SheetNames).toEqual(['요약', '장별 요약', '단계별 진도', '코드 모음']);
     if (process.env.REPORT_QA === '1') writeFileSync('/private/tmp/python-bite-class-report-qa.xlsx', file.bytes);
   });
@@ -60,7 +72,8 @@ describe('xlsx report', () => {
   it('preserves near-limit code and long identity fields exactly', () => {
     const file = buildStudentWorkbook(longFixture);
     const workbook = XLSX.read(file.bytes, { type: 'array' });
-    expect(workbook.Sheets['코드 모음'].D2.v).toBe(longCode);
+    expect(workbook.Sheets['코드 모음'].D2.v).toBe('');
+    expect(workbook.Sheets['코드 모음'].E2.v).toBe(longCode);
     expect(workbook.Sheets['요약'].B2.v).toBe(longFixture.school);
   });
 });

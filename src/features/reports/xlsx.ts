@@ -1,5 +1,5 @@
 import * as XLSX from 'xlsx';
-import { buildReportFilename, chapterReportSummaries, completionLabel, formatReportTimestamp, progressRate, reportId, reportString, runStatusLabel, statusLabel } from './format';
+import { buildReportFilename, chapterReportSummaries, completionLabel, formatReportTimestamp, progressRate, reportCodeVariants, reportId, reportString, runStatusLabel, statusLabel } from './format';
 import type { ReportFile, ReportLessonSnapshot, SubmissionReportSnapshot } from './types';
 
 const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
@@ -39,7 +39,7 @@ function summarySheet(snapshot: SubmissionReportSnapshot): XLSX.WorkSheet {
 }
 
 function statusSheet(snapshot: SubmissionReportSnapshot): XLSX.WorkSheet {
-  const header = ['순서', '단계 ID', '단계 이름', '학습 종류', '제출 당시 상태', '완료 여부', '제출 코드', '마지막 실행 판정', '마지막 실행 통과', '마지막 실행 시각', '마지막 성공 시각', '출력 요약'];
+  const header = ['순서', '단계 ID', '단계 이름', '학습 종류', '제출 당시 상태', '완료 여부', '마지막 실행 판정', '마지막 실행 통과', '마지막 실행 시각', '마지막 성공 시각', '출력 요약'];
   const rows: unknown[][] = [header];
   snapshot.progress.forEach((item: ReportLessonSnapshot, index) => {
     rows.push([
@@ -49,7 +49,6 @@ function statusSheet(snapshot: SubmissionReportSnapshot): XLSX.WorkSheet {
       completionLabel(item.completion),
       statusLabel(item.status),
       item.completed === true ? '완료' : '미완료',
-      item.submittedCode,
       runStatusLabel(item.lastRunStatus),
       item.lastRunPassed === true ? '통과' : item.lastRunPassed === false ? '실패' : '기록 없음',
       formatReportTimestamp(item.lastRunAt),
@@ -58,7 +57,7 @@ function statusSheet(snapshot: SubmissionReportSnapshot): XLSX.WorkSheet {
     ]);
   });
   const sheet = textRows(rows);
-  setWidths(sheet, [8, 18, 32, 14, 18, 14, 42, 18, 16, 24, 24, 50]);
+  setWidths(sheet, [8, 18, 32, 14, 18, 14, 18, 16, 24, 24, 50]);
   return sheet;
 }
 
@@ -71,10 +70,14 @@ function chapterSheet(snapshot: SubmissionReportSnapshot): XLSX.WorkSheet {
 }
 
 function codeSheet(snapshot: SubmissionReportSnapshot): XLSX.WorkSheet {
-  const rows: unknown[][] = [['순서', '단계 ID', '단계 이름', '제출 코드', '마지막 실행 코드', '마지막 성공 코드']];
-  snapshot.progress.forEach((item, index) => rows.push([index + 1, item.lessonId, item.title, item.submittedCode, item.lastExecutedCode, item.lastSuccessCode]));
+  const rows: unknown[][] = [['순서', '단계 ID', '단계 이름', '마지막 성공 코드', '마지막 실행 코드']];
+  snapshot.progress.forEach((item, index) => {
+    const variants = reportCodeVariants(item);
+    const byLabel = new Map(variants.map((variant) => [variant.label, variant.code]));
+    rows.push([index + 1, item.lessonId, item.title, byLabel.get('마지막 성공 코드'), byLabel.get('마지막 실행 코드')]);
+  });
   const sheet = textRows(rows);
-  setWidths(sheet, [8, 18, 32, 90, 90, 90]);
+  setWidths(sheet, [8, 18, 32, 90, 90]);
   return sheet;
 }
 

@@ -1,6 +1,6 @@
 import { PDFDocument, rgb, type PDFPage } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
-import { chapterReportSummaries, completionLabel, formatReportTimestamp, progressRate, runStatusLabel, shouldIncludeReportCode, statusLabel } from './format';
+import { chapterReportSummaries, completionLabel, formatReportTimestamp, progressRate, reportCodeVariants, runStatusLabel, shouldIncludeReportCode, statusLabel } from './format';
 import { MARGIN, PAGE_WIDTH, PdfWriter, resolveFontBytes, type PdfReportOptions } from './pdf';
 import { buildLocalReportFilename, type LocalStudentReportSnapshot } from './student';
 import type { ReportFile, ReportLessonSnapshot } from './types';
@@ -19,10 +19,7 @@ function drawLesson(writer: PdfWriter, item: ReportLessonSnapshot, index: number
   const hasExecutionRecord = Boolean(item.lastRunStatus || item.lastRunAt || item.lastRunPassed !== null || item.lastSuccessAt);
   if ((item.completion !== 'read' && item.completion !== 'optional') || hasExecutionRecord) writer.text(`마지막 실행: ${runStatusLabel(item.lastRunStatus)} (${item.lastRunPassed === true ? '통과' : item.lastRunPassed === false ? '실패' : '판정 없음'}) / ${formatReportTimestamp(item.lastRunAt)} · 마지막 성공: ${formatReportTimestamp(item.lastSuccessAt)}`);
   if (item.outputSummary) writer.text(`출력 요약: ${item.outputSummary}`);
-  const hasCurrentCode = item.submittedCode !== undefined && (item.submittedCode.length > 0 || item.completion === 'run' || item.completion === 'challenge');
-  if (hasCurrentCode) { writer.text('현재 저장 코드', 9.5, { r: 0.05, g: 0.28, b: 0.3 }, 2); writer.code(item.submittedCode); }
-  if (item.lastExecutedCode) { writer.text('마지막 실행 코드', 9.5, { r: 0.05, g: 0.28, b: 0.3 }, 2); writer.code(item.lastExecutedCode); }
-  if (item.lastSuccessCode && item.lastSuccessCode !== item.lastExecutedCode) { writer.text('마지막 성공 코드', 9.5, { r: 0.05, g: 0.28, b: 0.3 }, 2); writer.code(item.lastSuccessCode); }
+  reportCodeVariants(item).forEach(({ label, code }) => { writer.text(label, 9.5, { r: 0.05, g: 0.28, b: 0.3 }, 2); writer.code(code); });
 }
 
 export async function buildLocalStudentPdf(snapshot: LocalStudentReportSnapshot, options: PdfReportOptions = {}): Promise<ReportFile> {

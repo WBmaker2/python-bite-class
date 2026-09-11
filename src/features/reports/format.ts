@@ -49,6 +49,19 @@ export function shouldIncludeReportCode(item: Pick<ReportLessonSnapshot, 'comple
   return item.completed === true;
 }
 
+export interface ReportCodeVariant { label: '마지막 성공 코드' | '마지막 실행 코드'; code: string; }
+
+/** Selects the report-visible execution history without exposing the saved submission code. */
+export function reportCodeVariants(item: Pick<ReportLessonSnapshot, 'completed' | 'lastSuccessCode' | 'lastExecutedCode'>): ReportCodeVariant[] {
+  if (!shouldIncludeReportCode(item)) return [];
+  const variants: ReportCodeVariant[] = [];
+  const success = reportString(item.lastSuccessCode);
+  const executed = reportString(item.lastExecutedCode);
+  if (success.trim()) variants.push({ label: '마지막 성공 코드', code: success });
+  if (executed.trim() && executed !== success) variants.push({ label: '마지막 실행 코드', code: executed });
+  return variants;
+}
+
 export function progressRate(snapshot: Pick<SubmissionReportSnapshot, 'requiredLessonCount' | 'completedRequiredCount'>): string {
   const required = Number.isFinite(snapshot.requiredLessonCount) ? snapshot.requiredLessonCount : 0;
   if (required <= 0) return '0%';
