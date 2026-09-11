@@ -11,15 +11,15 @@ const profile: StudentProfile = { id: 'student-1', school: '우리 학교', name
 beforeEach(() => vi.clearAllMocks());
 
 describe('StudentReportDialog', () => {
-  it('shows local scope and keeps code inclusion off by default', () => {
+  it('shows local scope and includes code by default while allowing it to be turned off', () => {
     const view = render(<StudentReportDialog profile={profile} progress={profile.progress} currentLessonId="chapter-1-1" onClose={vi.fn()} onNeedProfile={vi.fn()} />);
     expect(screen.getByText('우리 학교 · 학생')).toBeInTheDocument();
     expect(screen.getByRole('combobox', { name: '보고서 범위' })).toHaveValue('all');
-    expect(screen.getByRole('checkbox', { name: '작성한 코드 포함' })).not.toBeChecked();
+    expect(screen.getByRole('checkbox', { name: '작성한 코드 포함' })).toBeChecked();
     fireEvent.change(screen.getByRole('combobox', { name: '보고서 범위' }), { target: { value: 'chapter' } });
     expect(screen.getByRole('combobox', { name: '보고서 범위' })).toHaveValue('chapter');
     fireEvent.click(screen.getByRole('checkbox', { name: '작성한 코드 포함' }));
-    expect(screen.getByRole('checkbox', { name: '작성한 코드 포함' })).toBeChecked();
+    expect(screen.getByRole('checkbox', { name: '작성한 코드 포함' })).not.toBeChecked();
     expect(view.container.querySelector('.report-dialog-body')).toBeInTheDocument();
     expect(view.container.querySelector('.report-dialog-footer')).toBeInTheDocument();
     expect([...view.container.querySelectorAll('.report-lesson-list details')].every((item) => !item.hasAttribute('open'))).toBe(true);
@@ -39,7 +39,6 @@ describe('StudentReportDialog', () => {
     const first = { ...profile, progress: { ...profile.progress, codeByLesson: { 'chapter-1-1': 'print("첫 학생")' } } };
     const second = { ...profile, id: 'student-2', school: '다른 학교', name: '다른 학생', progress: { ...profile.progress, codeByLesson: { 'chapter-1-1': 'print("다른 학생")' } } };
     const view = render(<StudentReportDialog profile={first} progress={first.progress} currentLessonId="chapter-1-1" onClose={vi.fn()} onNeedProfile={vi.fn()} />);
-    fireEvent.click(screen.getByRole('checkbox', { name: '작성한 코드 포함' }));
     fireEvent.click(screen.getByRole('button', { name: 'PDF 내려받기' }));
     await waitFor(() => expect(pdfMock.downloadLocalStudentPdf).toHaveBeenCalledOnce());
     view.rerender(<StudentReportDialog profile={second} progress={second.progress} currentLessonId="chapter-1-1" onClose={vi.fn()} onNeedProfile={vi.fn()} />);

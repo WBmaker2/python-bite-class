@@ -15,7 +15,7 @@ interface Props {
 
 export function StudentReportDialog({ profile, progress, currentLessonId, onClose, onNeedProfile }: Props) {
   const [scope, setScope] = useState<StudentReportScope>('all');
-  const [includeCode, setIncludeCode] = useState(false);
+  const [includeCode, setIncludeCode] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const closeRef = useRef<HTMLButtonElement>(null);
